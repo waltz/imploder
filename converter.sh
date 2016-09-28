@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -x
+set -e
 
 # takes a gif and a youtube url and makes an mp4
 # requires youtube-dl and ffmpeg
@@ -8,20 +9,25 @@ set -x
 GIF_URL=$1
 YOUTUBE_URL=$2
 OFFSET=$3
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+YOUTUBE_DL=$CURRENT_PATH/vendor/youtube-dl
 
 # cleanup any other outputs
-rm out.mp4
+rm -f out.mp4
 
 # download the gif
 curl $GIF_URL > image.gif
 
 # convert the gif to an mp4
-ffmpeg \
-  -i image.gif\
+yes | ffmpeg \
+  -i image.gif \
+  -pix_fmt yuv420p \
+  -r 30 \
+  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"\
   video-no-audio.mp4
 
 # get the audio file. 140 is the code for the m4a audio track
-youtube-dl \
+$YOUTUBE_DL \
   --format 140 \
   -o audio.m4a \
   $YOUTUBE_URL
@@ -35,15 +41,7 @@ ffmpeg \
   -map 0:v:0\
   -map 1:a:0\
   -shortest\
-  intermediate.mp4
-
-# set the right pixel format and framerate for twitter upload
-ffmpeg \
-  -i intermediate.mp4\
-  -pix_fmt yuv420p\
-  -r 30\
-  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"\
   out.mp4
 
 # cleanup the tempfiles
-rm image.gif audio.m4a video-no-audio.mp4 intermediate.mp4
+rm -f image.gif audio.m4a video-no-audio.mp4 intermediate.mp4
