@@ -13,7 +13,7 @@ class ExportGifSound < Sinatra::Base
     youtube_url = "http://www.youtube.com/watch?v=#{youtube_id}"
     youtube_video_start_delay = params[:s] || 0
 
-    command = "bash ./converter.sh #{gif_url} #{youtube_url} #{youtube_video_start_delay}"
+    command = "./converter.sh #{gif_url} #{youtube_url} #{youtube_video_start_delay}"
 
     p "Current GIF url: #{gif_url}"
     p "Current YT start delay: #{youtube_video_start_delay}"
