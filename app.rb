@@ -8,7 +8,7 @@ class ExportGifSound < Sinatra::Base
     youtube_url = "http://www.youtube.com/watch?v=#{youtube_id}"
     youtube_video_start_delay = 0 || params[:s]
 
-    did_converting_work = system("./converter.sh #{gif_url} #{youtube_url} #{youtube_video_start_delay}")
+    did_converting_work = system("bash ./converter.sh #{gif_url} #{youtube_url} #{youtube_video_start_delay}")
 
     if did_converting_work
       send_file "out.mp4"
