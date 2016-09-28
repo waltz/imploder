@@ -2,9 +2,15 @@ class ProcessVideoJob
   include SuckerPunch::Job
 
   def perform(params)
+    if params[:gfycat]
+      gif_url = "https://giant.gfycat.com/#{params[:gfycat]}.mp4"
+    end
+
     if params[:gifv]
       gif_url = "http://i.imgur.com/#{params[:gifv]}.mp4"
-    else
+    end
+
+    if params[:gif]
       gif_url = params[:gif]
     end
 
