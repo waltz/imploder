@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 # takes a gif and a youtube url and makes an mp4
 # requires youtube-dl and ffmpeg
 
@@ -14,10 +16,15 @@ rm out.mp4
 curl $GIF_URL > image.gif
 
 # convert the gif to an mp4
-ffmpeg -f gif -i image.gif video-no-audio.mp4
+ffmpeg \
+  -i image.gif\
+  video-no-audio.mp4
 
 # get the audio file. 140 is the code for the m4a audio track
-youtube-dl --format 140 -o audio.m4a $YOUTUBE_URL
+youtube-dl \
+  --format 140 \
+  -o audio.m4a \
+  $YOUTUBE_URL
 
 # combine the two videos
 ffmpeg \
@@ -35,6 +42,7 @@ ffmpeg \
   -i intermediate.mp4\
   -pix_fmt yuv420p\
   -r 30\
+  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"\
   out.mp4
 
 # cleanup the tempfiles
