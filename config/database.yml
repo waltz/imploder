@@ -1,0 +1,16 @@
+default: &default
+  adapter: postgresql
+  pool: 5
+  timeout: 5000
+
+development:
+  <<: *default
+  database: exportgifsound_development
+
+test:
+  <<: *default
+  database: exportgifsound_test
+
+production:
+  <<: *default
+  database: exportgifsound_production

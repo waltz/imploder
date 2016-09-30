@@ -10,7 +10,7 @@ GIF_URL=$1
 YOUTUBE_URL=$2
 OFFSET=$3
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-YOUTUBE_DL=$CURRENT_PATH/vendor/youtube-dl
+YOUTUBE_DL=$CURRENT_PATH/../vendor/youtube-dl
 
 # cleanup any other outputs
 rm -f out.mp4
