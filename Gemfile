@@ -2,7 +2,8 @@ ruby File.read('.ruby-version').strip
 
 source 'https://rubygems.org'
 
-gem 'capistrano'
+gem 'capistrano', '~> 3.1'
+gem 'capistrano-bundler', '~> 1.1.2'
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
