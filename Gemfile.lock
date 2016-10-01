@@ -85,7 +85,6 @@ GEM
       pkg-config (~> 1.1.7)
     pg (0.18.4)
     pkg-config (1.1.7)
-    puma (3.6.0)
     rack (2.0.1)
     rack-protection (1.5.3)
       rack
@@ -166,7 +165,6 @@ DEPENDENCIES
   jquery-rails
   listen (~> 3.0.5)
   pg
-  puma (~> 3.0)
   rails (~> 5.0.0, >= 5.0.0.1)
   sass-rails (~> 5.0)
   sidekiq
