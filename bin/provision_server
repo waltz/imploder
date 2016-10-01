@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -x
+set -e
+
+# Given a bare Ubuntu Xenial 16.04 box, set up the system requirements.
+
+DEPLOY_USERNAME=deploy
+
+apt-get install -y build-essential \
+                   redis-server \
+                   ffmpeg \
+
+# Set up Postgres.
+apt-get install -y postgresql postgresql-contrib
+sudo -u postgres postgres createuser --createdb $DEPLOY_USERNAME
+sudo -u postgres postgres createdb --owner $DEPLOY_USERNAME $DEPLOY_USERNAME
+
+# Install a more recent version of Ruby.
+apt-get install software-properties-common
+apt-add-repository ppa:brightbox/ruby-ng
+apt-get update
+apt-get install ruby2.3 ruby2.3-dev
+
+# Install Nginx and the Passenger addon.
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main > /etc/apt/sources.list.d/passenger.list'
+apt-get update
+apt-get install -y nginx-extras passenger
+
+# Create the deploy user.
+useradd --create-home $DEPLOY_USERNAME
+mkdir 0700 /home/deploy/.ssh
+curl https://github.com/waltz.keys > /home/deploy/.ssh/authorized_keys
+chown -R deploy:deploy /home/deploy/.ssh
+chmod -R 0700 /home/deploy/.ssh
+
+# Set up a directory for the application code to live.
+mkdir -p /var/www/exportgifsound.com
+chown $DEPLOY_USERNAME:$DEPLOY_USERNAME /var/www/exportgifsound.com
