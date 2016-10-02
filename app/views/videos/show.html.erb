@@ -1,0 +1,12 @@
+<% if !@video.ready? %>
+  <div id="video-fetcher" data-video-id=<%= @video.id %>>
+    <p>Making your video. Hold tight!</p>
+    <%= image_tag 'spinner.gif', class: 'spinner' %>
+  </div>
+<% end %>
+
+<div id="video-player">
+  <video controls autoplay loop width="500px">
+    <source src="/videos/<%= @video.id %>.mp4" type="video/mp4">
+  </video>
+</div>

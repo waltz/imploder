@@ -3,45 +3,50 @@
 set -x
 set -e
 
-# takes a gif and a youtube url and makes an mp4
-# requires youtube-dl and ffmpeg
+# Combine the moving image of a GIF and the audio from a YouTube video in to
+# a tidy little video.
+
+# Relies on youtube-dl and ffmpeg to do the dirty work.
 
 GIF_URL=$1
 YOUTUBE_URL=$2
 OFFSET=$3
+OUTPUT_PATH=$4
+
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 YOUTUBE_DL=$CURRENT_PATH/../vendor/youtube-dl
-
-# cleanup any other outputs
-rm -f out.mp4
+GIF_FILE=`mktemp`
+VIDEO_NO_AUDIO_FILE=`mktemp`
+AUDIO_FILE=/tmp/$RANDOM.m4a
 
 # download the gif
-curl $GIF_URL > image.gif
+curl $GIF_URL > $GIF_FILE
 
 # convert the gif to an mp4
 yes | ffmpeg \
-  -i image.gif \
+  -i $GIF_FILE \
+  -profile:v baseline \
   -pix_fmt yuv420p \
   -r 30 \
-  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"\
-  video-no-audio.mp4
+  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
+  -f mp4 \
+  $VIDEO_NO_AUDIO_FILE
 
 # get the audio file. 140 is the code for the m4a audio track
-$YOUTUBE_DL \
-  --format 140 \
-  -o audio.m4a \
-  $YOUTUBE_URL
+$YOUTUBE_DL --format 140 -o $AUDIO_FILE $YOUTUBE_URL
 
 # combine the two videos
 ffmpeg \
-  -i video-no-audio.mp4\
-  -ss $OFFSET\
-  -i audio.m4a\
-  -c copy\
-  -map 0:v:0\
-  -map 1:a:0\
-  -shortest\
-  out.mp4
+  -i $VIDEO_NO_AUDIO_FILE \
+  -ss $OFFSET \
+  -i $AUDIO_FILE \
+  -c copy \
+  -map 0:v:0 \
+  -map 1:a:0 \
+  -shortest \
+  $OUTPUT_PATH
 
 # cleanup the tempfiles
-rm -f image.gif audio.m4a video-no-audio.mp4 intermediate.mp4
+rm -f $GIF_FILE $AUDIO_FILE $VIDEO_NO_AUDIO_FILE
+
+echo "Processed: $OUTPUT_PATH"

@@ -3,8 +3,8 @@ ruby File.read('.ruby-version').strip
 source 'https://rubygems.org'
 
 gem 'capistrano', '~> 3.1'
-gem 'capistrano-bundler', '~> 1.1.2'
 gem 'capistrano-passenger'
+gem 'capistrano-rails', '~> 1.1'
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 gem 'sass-rails', '~> 5.0'
 gem 'jquery-rails'

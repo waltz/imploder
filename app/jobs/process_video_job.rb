@@ -1,27 +1,8 @@
 class ProcessVideoJob < ApplicationJob
-  def perform(params)
-    if params['gfycat']
-      gif_url = "https://giant.gfycat.com/#{params['gfycat']}.mp4"
-    end
-
-    if params['gifv']
-      gif_url = "http://i.imgur.com/#{params['gifv']}.mp4"
-    end
-
-    if params['gif']
-      gif_url = params['gif']
-    end
-
-    youtube_id = params['v']
-    youtube_url = "http://www.youtube.com/watch?v=#{youtube_id}"
-    youtube_video_start_delay = params['s'] || 0
-
-    command = "./bin/converter #{gif_url} #{youtube_url} #{youtube_video_start_delay}"
-
-    p "Current GIF url: #{gif_url}"
-    p "Current YT start delay: #{youtube_video_start_delay}"
-    p "conversion command: #{command}"
-
-    system(command)
+  def perform(video_id)
+    video = Video.find(video_id)
+    destination_path = Rails.root.join('public', 'videos', "#{video.id}.mp4")
+    system("./bin/converter #{video.gif_url} #{video.youtube_url} #{video.audio_start_delay} #{destination_path}")
+    video.update!({ status: 'ready' })
   end
 end
