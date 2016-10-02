@@ -1,0 +1,43 @@
+/*
+ *= require_tree .
+ *= require_self
+ */
+
+$white: #FFF;
+$yellow: #FFEA50;
+
+$light-pink: #ED7AFF;
+$dark-pink: #A025B2;
+$light-teal: #4DCCA7;
+$dark-teal: #4CB295;
+
+$light-blue: #6AEFFF;
+$light-tan: #CCBB41;
+$dark-tan: #B2A542;
+
+
+html {
+  font-family: 'Monaco', monospace;
+  background-color: $light-pink;
+  text-transform: lowercase;
+  font-size: 16pt;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: $light-tan;
+  text-decoration-color: darken($light-tan, 100);
+  text-decoration: underline;
+}
+
+#container {
+  width: 30em;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  background-color: $white;
+  padding: 2em;
+  border: 15px solid lighten($light-pink, 22);
+}
+
+.spinner {
+  width: 75px;
+}

@@ -8,13 +8,15 @@ var ready = false;
 $(function() {
   var video_fetcher = $("#video-fetcher");
 
-  if (video_fetcher != null) {
+  if (video_fetcher.length > 0) {
+    $("#video-player").hide();
     video_id = video_fetcher.data("video-id");
     poll(video_id);
   }
 });
 
 function showVideo() {
+  $("#video-fetcher").hide();
   $("#video-player").show();
 }
 
@@ -23,11 +25,8 @@ function poll() {
     url: '/videos/' + video_id + '/status',
     type: "GET",
     success: function(data) {
-      console.log(data);
-
       if (data.status === "ready") {
         ready = true;
-        console.log('redddy');
         showVideo();
       }
     },

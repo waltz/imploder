@@ -1,15 +1,11 @@
 class VideosController < ApplicationController
   def new
-    # https://gifsound.com/?gif=i.imgur.com/bYmN79L.gif&v=bWMw4vE3J8s&s=12
-    p gifsound_params
-
     @video = Video.from_gifsound_params(gifsound_params)
-    @video.save
 
-    p @video.id
-
-    ProcessVideoJob.perform_later(@video.id)
-    redirect_to video_path(@video)
+    if @video.save
+      ProcessVideoJob.perform_later(@video.id)
+      redirect_to video_path(@video)
+    end
   end
 
   def show
