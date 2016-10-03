@@ -7,7 +7,7 @@ $(function() {
 
     var setGif = function(event) {
       $("#gif").attr("src", event.target.value);
-    });
+    }
 
     console.log('loaded composer');
   }
