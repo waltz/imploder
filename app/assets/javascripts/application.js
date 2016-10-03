@@ -18,6 +18,7 @@ $(function() {
 function showVideo() {
   $("#video-fetcher").hide();
   $("#video-player").show();
+  $("#video-player video")[0].play();
 }
 
 function poll() {
