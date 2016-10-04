@@ -15,10 +15,21 @@ $(function() {
   }
 });
 
+function videoUrl() {
+  return "/videos/" + video_id + ".mp4";
+}
+
 function showVideo() {
   $("#video-fetcher").hide();
   $("#video-player").show();
-  $("#video-player video")[0].play();
+
+  var video_player = document.getElementById("video-player");
+  var source = document.createElement("source");
+  source.setAttribute("src", "/videos/" + video_id + ".mp4");
+  source.setAttribute("type", "video/mp4");
+  video_player.appendChild(source);
+  video_player.load();
+  video_player.play();
 }
 
 function poll() {

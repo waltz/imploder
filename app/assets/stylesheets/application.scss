@@ -23,9 +23,11 @@ html {
   font-size: 16pt;
   font-weight: 600;
   letter-spacing: 1px;
-  color: $light-tan;
-  text-decoration-color: darken($light-tan, 100);
-  text-decoration: underline;
+  color: lighten($light-pink, 30);
+}
+
+a {
+  color: lighten($light-pink, 15);
 }
 
 #container {
@@ -33,11 +35,23 @@ html {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  background-color: $white;
-  padding: 2em;
-  border: 15px solid lighten($light-pink, 22);
 }
 
+main {
+  background-color: $white;
+  color: $light-blue;
+  padding: 1em;
+  border: 15px solid lighten($light-pink, 22);
+  margin-bottom: 2em;
+}
+
+footer {
+  margin-bottom: 2em;
+}
 .spinner {
   width: 75px;
+}
+
+#video-player {
+  width: 500px;
 }
