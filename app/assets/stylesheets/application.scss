@@ -26,6 +26,13 @@ html {
   color: lighten($light-pink, 30);
 }
 
+h1 {
+  a {
+    color: $white;
+    text-decoration: none;
+  }
+}
+
 a {
   color: lighten($light-pink, 15);
 }
