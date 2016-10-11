@@ -3,4 +3,4 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database exportgifsound_test;' -U postgres
-  - rake db:schema:load
+  - bundle exec rails db:schema:load
