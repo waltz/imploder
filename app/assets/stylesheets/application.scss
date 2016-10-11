@@ -54,6 +54,10 @@ main {
 
 footer {
   margin-bottom: 2em;
+
+  ul {
+    list-style-type: none;
+  }
 }
 .spinner {
   width: 75px;
