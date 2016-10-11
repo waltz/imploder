@@ -20,6 +20,6 @@ class VideosController < ApplicationController
   private
 
   def gifsound_params
-    params.permit(:gif, :v, :s, :gfycat, :gifv).to_hash
+    params.slice(:gif, :v, :s, :gfycat, :gifv)
   end
 end

@@ -10,7 +10,6 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.filter_run_when_matching :focus
   config.example_status_persistence_file_path = "tmp/examples.txt"
-  config.profile_examples = 10
   config.order = :random
   Kernel.srand config.seed
 end
