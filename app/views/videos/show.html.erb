@@ -5,7 +5,7 @@
   </div>
 <% end %>
 
-<video id="video-player" autoplay loop>
+<video id="video-player" autoplay loop controls>
   <% if @video.ready? %>
     <source src="/videos/<%= @video.id %>.mp4" type="video/mp4">
   <% end %>

@@ -12,21 +12,23 @@
     <div id="container">
       <header>
         <h1>
-          <%= link_to "gif imploder", root_path %>
+          <%= link_to "gif imploder", root_path, title: 'go home' %>
         </h1>
       </header>
 
-      <main>
-        <%= yield %>
-      </main>
+      <div id="main-outer">
+        <main>
+          <%= yield %>
+        </main>
+      </div>
 
       <footer>
         <ul>
           <li>
-            built by <a href="http://twitter.com/waltz">@waltz</a>
+            built by <a href="http://twitter.com/waltz" title="big on the internet">@waltz</a>
           </li>
           <li>
-            see the <a href="https://github.com/waltz/exportgifsound.com">the source</a>
+            see the <a href="https://github.com/waltz/exportgifsound.com" title="oh god don't judge me">the source</a>
           </li>
         </ul>
       </footer>
