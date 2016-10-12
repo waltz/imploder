@@ -1,7 +1,6 @@
 language: ruby
 services:
   - postgresql
-  - redis-server
 before_script:
   - psql -c 'create database exportgifsound_test;' -U postgres
   - bundle exec rails db:schema:load
