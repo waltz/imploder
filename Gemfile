@@ -12,6 +12,7 @@ gem 'pg'
 gem 'sidekiq'
 
 group :development, :test do
+  gem 'awesome_print'
   gem 'byebug', platform: :mri
   gem 'capybara'
   gem 'factory_girl_rails'

@@ -10,9 +10,25 @@ RSpec.describe VideosController, type: :controller do
     end
 
     context 'with gifsound.com style url parameters' do
+      before do
+        get :new, params: { gif: 'things', v: 'great-id' }
+      end
+
       it 'redirects to the video page' do
-        get :new, params: { gif: 'things', v: 'youtube.com/foo' }
         expect(response).to redirect_to(video_path(assigns(:video).id))
+      end
+
+      it 'has the right video id' do
+        expect(assigns(:video).youtube_url).to eq('https://www.youtube.com/watch?v=great-id')
+      end
+
+      it 'has the right gif url' do
+        expect(assigns(:video).gif_url).to eq('things')
+      end
+
+      it 'processes the video' do
+        expect(ProcessVideoJob).to receive(:perform_later)
+        get :new, params: { gif: 'things', v: 'great-id' }
       end
     end
   end
