@@ -2,7 +2,7 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
   root 'videos#new'
-  resources :videos, only: [ :new, :show ] do
+  resources :videos, only: [ :new, :show, :create ] do
     member do
       get :status
     end

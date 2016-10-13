@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe VideosController, type: :controller do
+  it { is_expected.to route(:get, '/').to('videos#new') }
+  it { is_expected.to route(:post, '/videos').to('videos#create') }
+  it { is_expected.to route(:get, '/videos/2').to('videos#show', id: 2) }
+
   describe 'GET #new' do
     context 'without any url parameters' do
       it 'renders the new page' do

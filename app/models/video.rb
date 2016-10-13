@@ -17,6 +17,10 @@ class Video < ApplicationRecord
     )
   end
 
+  def audio_start_delay
+    read_attribute(:audio_start_delay) || 0
+  end
+
   def ready?
     status == 'ready'
   end

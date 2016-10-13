@@ -1,5 +1,9 @@
+$golden-ratio: 1.618033988749895;
+
 @import "fonts/_news_cycle.scss";
 @import "_colors.scss";
+@import "_composer.scss";
+
 
 html {
   font-family: 'NewsCycle', sans-serif;
@@ -14,11 +18,19 @@ h1 {
   a {
     color: $white;
     text-decoration: none;
+
+    &:hover {
+      color: darken($white, 5);
+    }
   }
 }
 
 a {
   color: lighten($pink, 15);
+
+  &:hover {
+    color: lighten($pink, 10);
+  }
 }
 
 #container {
