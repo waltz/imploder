@@ -11,3 +11,4 @@
 !/tmp/.keep
 .byebug_history
 *.rdb
+*.tfstate*

@@ -1,0 +1,4 @@
+---
+- hosts: all
+  tasks:
+    - file: path=/root/ansible-worked state=touch
