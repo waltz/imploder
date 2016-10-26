@@ -1,4 +1,32 @@
 ---
 - hosts: all
+  user: root
   tasks:
-    - file: path=/root/ansible-worked state=touch
+    - name: add special ppa repo
+      apt_repository: repo='ppa:brightbox/ruby-ng'
+  
+    - name: install packages
+      apt: name={{ item }} state=latest update_cache=yes
+      with_items:
+        - software-properties-common
+        - build-essential
+        - redis-server
+        - ffmpeg
+        - postgresql
+        - postgresql-contrib
+        - ruby2.3
+        - ruby2.3-dev
+        - python-psycopg2
+
+    - name: start postgres
+      service: name=postgresql state=started
+
+    - name: configure postgres db
+      become: true
+      become_user: postgres
+      postgresql_db: name=deploy
+
+    - name: configure postgres user
+      become: true
+      become_user: postgres
+      postgresql_user: db=deploy name=deploy priv=ALL
