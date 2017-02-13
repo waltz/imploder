@@ -1,10 +1,30 @@
 ---
 - hosts: all
   user: root
+  vars:
+    dbuser: joeyandjeffey
+    dbpassword: morgendorfer
+    dbname: exportgifsound
+    dburl: postgres://joeyandjeffey:morgendorfer@localhost:5432/exportgifsound
   tasks:
-    - name: add special ppa repo
+    - name: add support for https in apt
+      apt: pkg={{ item }} state=latest update_cache=yes cache_valid_time=3600
+      with_items:
+      - apt-transport-https
+      - ca-certificates
+
+    - name: add key for passenger repos
+      apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x561F9B9CAC40B2F7 id=AC40B2F7 state=present
+
+    - name: add the passenger repo
+      apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+
+    - name: force an apt update
+      apt: update_cache=yes
+
+    - name: add the brightbox ruby repo
       apt_repository: repo='ppa:brightbox/ruby-ng'
-  
+
     - name: install packages
       apt: name={{ item }} state=latest update_cache=yes
       with_items:
@@ -17,16 +37,80 @@
         - ruby2.3
         - ruby2.3-dev
         - python-psycopg2
+        - nginx-extras
+        - passenger
+        - libffi-dev
+        - libpq-dev
+
+    - name: install bundler
+      gem: name={{ item }} state=latest user_install=no
+      with_items:
+        - rake
+        - bundler
 
     - name: start postgres
-      service: name=postgresql state=started
+      service:
+        name: postgresql
+        state: started
 
     - name: configure postgres db
       become: true
       become_user: postgres
-      postgresql_db: name=deploy
+      postgresql_db:
+        name: '{{dbname}}'
 
     - name: configure postgres user
       become: true
       become_user: postgres
-      postgresql_user: db=deploy name=deploy priv=ALL
+      postgresql_user:
+        db: '{{dbname}}'
+        name: '{{dbuser}}'
+        password: '{{dbpassword}}'
+        priv: ALL
+
+    - name: create the deploy user
+      user:
+        name: deploy
+
+    - name: authorize the deploy key
+      authorized_key:
+        user: deploy
+        key: https://github.com/waltz.keys
+
+    - name: inject the database url into the environment
+      lineinfile:
+        dest: /home/deploy/.bashrc
+        regexp: '^export DATABASE_URL='
+        line: 'export DATABASE_URL={{dburl}}'
+
+    - name: set the application data directory
+      file:
+        path: /var/www/exportgifsound.com
+        state: directory
+        owner: deploy
+        group: deploy
+        mode: 0755
+
+    - name: get the code
+      become: true
+      become_user: deploy
+      git:
+        repo: https://github.com/waltz/exportgifsound.com
+        dest: /var/www/exportgifsound.com
+        force: yes
+
+    - name: install application dependencies
+      become: true
+      become_user: deploy
+      bundler:
+        state: present
+        gemfile: /var/www/exportgifsound.com/Gemfile
+
+    - name: migrate the database
+      become: true
+      become_user: deploy
+      command: rails db:migrate
+      environment:
+        DATABASE_URL: '{{dburl}}'
+      args:
+        chdir: /var/www/exportgifsound.com
