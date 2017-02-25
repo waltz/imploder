@@ -2,13 +2,18 @@
 - hosts: all
   user: root
   vars:
-    dbuser: joeyandjeffey
-    dbpassword: morgendorfer
-    dbname: exportgifsound
-    dburl: postgres://joeyandjeffey:morgendorfer@localhost:5432/exportgifsound
+    database_user: "{{lookup('env', 'DATABASE_USER')}}"
+    database_password: "{{lookup('env', 'DATABASE_PASSWORD')}}"
+    database_name: "{{lookup('env', 'DATABASE_NAME')}}"
+    database_url: 'postgres://{{database_user}}:{{database_password}}@localhost:5432/{{database_name}}'
+    application_path: /var/www/app
+    secret_key_base: "{{lookup('env', 'SECRET_KEY_BASE')}}"
+    sidekiq_username: "{{lookup('env', 'SIDEKIQ_USERNAME')}}"
+    sidekiq_password: "{{lookup('env', 'SIDEKIQ_PASSWORD')}}"
+    repository: https://github.com/waltz/exportgifsound.com
   tasks:
     - name: add support for https in apt
-      apt: pkg={{ item }} state=latest update_cache=yes cache_valid_time=3600
+      apt: pkg={{item}} state=latest update_cache=yes cache_valid_time=3600
       with_items:
       - apt-transport-https
       - ca-certificates
@@ -26,7 +31,7 @@
       apt_repository: repo='ppa:brightbox/ruby-ng'
 
     - name: install packages
-      apt: name={{ item }} state=latest update_cache=yes
+      apt: name={{item}} state=latest update_cache=yes
       with_items:
         - software-properties-common
         - build-essential
@@ -43,13 +48,18 @@
         - libpq-dev
 
     - name: install bundler
-      gem: name={{ item }} state=latest user_install=no
+      gem: name={{item}} state=latest user_install=no
       with_items:
         - rake
         - bundler
 
+    - name: start redis
+      systemd:
+        name: redis-server
+        state: started
+
     - name: start postgres
-      service:
+      systemd:
         name: postgresql
         state: started
 
@@ -57,16 +67,77 @@
       become: true
       become_user: postgres
       postgresql_db:
-        name: '{{dbname}}'
+        name: '{{database_name}}'
 
     - name: configure postgres user
       become: true
       become_user: postgres
       postgresql_user:
-        db: '{{dbname}}'
-        name: '{{dbuser}}'
-        password: '{{dbpassword}}'
+        db: '{{database_name}}'
+        name: '{{database_user}}'
+        password: '{{database_password}}'
         priv: ALL
+
+    - name: tell nginx to enable the passenger module
+      lineinfile:
+        dest: /etc/nginx/nginx.conf
+        regexp: 'passenger.conf'
+        line: 'include /etc/nginx/passenger.conf;'
+
+    - name: enable and configure the nginx site
+      copy:
+        dest: /etc/nginx/sites-available/default
+        content: |
+          server {
+            listen 80;
+            passenger_enabled on;
+            root {{application_path}}/public;
+          	passenger_env_var PATH /usr/bin:/bin;
+            passenger_env_var DATABASE_URL {{database_url}};
+            passenger_env_var SECRET_KEY_BASE {{secret_key_base}};
+            passenger_env_var SIDEKIQ_USERNAME {{sidekiq_username}};
+            passenger_env_var SIDEKIQ_PASSWORD {{sidekiq_password}};
+          }
+
+    - name: wrap sidekiq in an systemd service
+      copy:
+        dest: /lib/systemd/system/sidekiq.service
+        content: |
+          [Unit]
+          Description=sidekiq
+          After=syslog.target network.target redis-server.service
+
+          [Service]
+          Type=simple
+          WorkingDirectory={{application_path}}
+          ExecStart=/usr/local/bin/bundle exec sidekiq -e production
+          User=deploy
+          Group=deploy
+          UMask=0002
+          Environment=DATABASE_URL={{database_url}}
+
+          RestartSec=1
+          Restart=on-failure
+
+          StandardOutput=syslog
+          StandardError=syslog
+
+          SyslogIdentifier=sidekiq
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: start the sidekiq service
+      systemd:
+        name: sidekiq
+        enabled: yes
+        state: started
+        daemon_reload: yes
+
+    - name: make nginx reload its configuration
+      systemd:
+        name: nginx
+        state: reloaded
 
     - name: create the deploy user
       user:
@@ -75,17 +146,11 @@
     - name: authorize the deploy key
       authorized_key:
         user: deploy
-        key: https://github.com/waltz.keys
-
-    - name: inject the database url into the environment
-      lineinfile:
-        dest: /home/deploy/.bashrc
-        regexp: '^export DATABASE_URL='
-        line: 'export DATABASE_URL={{dburl}}'
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
     - name: set the application data directory
       file:
-        path: /var/www/exportgifsound.com
+        path: '{{application_path}}'
         state: directory
         owner: deploy
         group: deploy
@@ -95,8 +160,8 @@
       become: true
       become_user: deploy
       git:
-        repo: https://github.com/waltz/exportgifsound.com
-        dest: /var/www/exportgifsound.com
+        repo: '{{repository}}'
+        dest: '{{application_path}}'
         force: yes
 
     - name: install application dependencies
@@ -104,13 +169,20 @@
       become_user: deploy
       bundler:
         state: present
-        gemfile: /var/www/exportgifsound.com/Gemfile
+        gemfile: '{{application_path}}/Gemfile'
 
     - name: migrate the database
       become: true
       become_user: deploy
       command: rails db:migrate
       environment:
-        DATABASE_URL: '{{dburl}}'
+        DATABASE_URL: '{{database_url}}'
       args:
-        chdir: /var/www/exportgifsound.com
+        chdir: '{{application_path}}'
+
+    - name: compile assets
+      become: true
+      become_user: deploy
+      command: rails assets:precompile
+      args:
+        chdir: '{{application_path}}'
