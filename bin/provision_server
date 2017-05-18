@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-set -x
-set -e
-set -a
+set -xea
 
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ENV_FILE=$CURRENT_PATH/../.env
 
-. $ENV_FILE
+if [ -e $ENV_FILE ]
+then
+  . $ENV_FILE
+fi
+
 terraform apply
 SERVER_IP=`terraform output ip`
 ansible-playbook -i $SERVER_IP, $CURRENT_PATH/../server.yml
