@@ -27,9 +27,6 @@
     - name: force an apt update
       apt: update_cache=yes
 
-    - name: add the brightbox ruby repo
-      apt_repository: repo='ppa:brightbox/ruby-ng'
-
     - name: install packages
       apt: name={{item}} state=latest update_cache=yes
       with_items:
@@ -39,19 +36,25 @@
         - ffmpeg
         - postgresql
         - postgresql-contrib
-        - ruby2.3
-        - ruby2.3-dev
         - python-psycopg2
         - nginx-extras
         - passenger
         - libffi-dev
         - libpq-dev
-
-    - name: install bundler
-      gem: name={{item}} state=latest user_install=no
-      with_items:
-        - rake
-        - bundler
+        - git-core
+        - curl
+        - zlib1g-dev
+        - build-essential
+        - libssl-dev
+        - libreadline-dev
+        - libyaml-dev
+        - libsqlite3-dev
+        - sqlite3
+        - libxml2-dev
+        - libxslt1-dev
+        - libcurl4-openssl-dev
+        - python-software-properties
+        - libffi-dev
 
     - name: start redis
       systemd:
@@ -92,7 +95,10 @@
             listen 80;
             passenger_enabled on;
             root {{application_path}}/public;
-          	passenger_env_var PATH /usr/bin:/bin;
+            passenger_user deploy;
+            passenger_group deploy;
+            passenger_ruby /home/deploy/.rbenv/shims/ruby;
+          	passenger_env_var PATH ~/.rbenv/bin:/usr/bin:/bin;
             passenger_env_var DATABASE_URL {{database_url}};
             passenger_env_var SECRET_KEY_BASE {{secret_key_base}};
             passenger_env_var SIDEKIQ_USERNAME {{sidekiq_username}};
@@ -142,11 +148,49 @@
     - name: create the deploy user
       user:
         name: deploy
+        shell: /bin/bash
 
     - name: authorize the deploy key
       authorized_key:
         user: deploy
         key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: install rbenv for the deploy user
+      become: true
+      become_user: deploy
+      git:
+        repo: git://github.com/sstephenson/rbenv.git
+        dest: ~/.rbenv
+        clone: yes
+
+    - name: make sure the bash profile exists
+      become: true
+      become_user: deploy
+      file:
+        path: ~/.bash_profile
+        state: touch
+
+    - name: add the rbenv shim at the end of shell startup
+      become: true
+      become_user: deploy
+      lineinfile:
+        dest: ~/.bash_profile
+        line: 'export PATH="$HOME/.rbenv/bin:$PATH"'
+
+    - name: initialize rbenv on profile load
+      become: true
+      become_user: deploy
+      lineinfile:
+        dest: ~/.bash_profile
+        line: 'eval "$(rbenv init -)"'
+
+    - name: install ruby-build
+      become: true
+      become_user: deploy
+      git:
+        repo: https://github.com/rbenv/ruby-build.git
+        dest: ~/.rbenv/plugins/ruby-build
+        clone: yes
 
     - name: set the application data directory
       file:
@@ -164,25 +208,46 @@
         dest: '{{application_path}}'
         force: yes
 
+    - name: install the ruby version that the app wants
+      become: true
+      become_user: deploy
+      shell: source ~/.bash_profile && rbenv install --skip-existing
+      args:
+        chdir: '{{application_path}}'
+        executable: /bin/bash
+      environment:
+        RUBY_CONFIGURE_OPTS: --disable-install-doc
+
+    - name: install bundler
+      become: true
+      become_user: deploy
+      shell: source ~/.bash_profile && gem install bundler
+      args:
+        chdir: '{{application_path}}'
+        executable: /bin/bash
+
     - name: install application dependencies
       become: true
       become_user: deploy
-      bundler:
-        state: present
-        gemfile: '{{application_path}}/Gemfile'
+      shell: source ~/.bash_profile && bundle
+      args:
+        chdir: '{{application_path}}'
+        executable: /bin/bash
 
     - name: migrate the database
       become: true
       become_user: deploy
-      command: rails db:migrate
-      environment:
-        DATABASE_URL: '{{database_url}}'
+      shell: source ~/.bash_profile && rails db:migrate
       args:
         chdir: '{{application_path}}'
+        executable: /bin/bash
+      environment:
+        DATABASE_URL: '{{database_url}}'
 
     - name: compile assets
       become: true
       become_user: deploy
-      command: rails assets:precompile
+      shell: source ~/.bash_profile && rails assets:precompile
       args:
         chdir: '{{application_path}}'
+        executable: /bin/bash

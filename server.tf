@@ -14,19 +14,19 @@ resource "digitalocean_ssh_key" "default" {
 }
 
 resource "digitalocean_droplet" "web" {
-	image = "ubuntu-16-04-x64"
+    image = "ubuntu-16-04-x64"
     name = "exportgifsound-test"
-    region = "nyc2"
+    region = "nyc3"
     size = "512mb"
     ssh_keys = [ "${digitalocean_ssh_key.default.id}" ]
 
-	connection {
-		private_key = "${file("~/.ssh/id_rsa")}"
-	}
+    connection {
+      private_key = "${file("~/.ssh/id_rsa")}"
+    }
 
     provisioner "remote-exec" {
-        inline = [
-		  "sudo yes | apt-get install python"
-	    ]
+      inline = [
+        "sudo yes | apt-get install python"
+      ]
     }
 }
