@@ -6,4 +6,13 @@ before_script:
   - bundle exec rails db:schema:load
 script:
   - bundle exec rake
-  - bin/provision_server
+before_deploy:
+  - curl -fSL "https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_linux_amd64.zip" -o terraform.zip
+  - sudo unzip terraform.zip -d /opt/terraform
+  - sudo ln -s /opt/terraform/terraform /usr/bin/terraform
+  - rm -f terraform.zip
+deploy:
+  provider: script
+  script: bin/provision_server
+  on:
+    branch: master
