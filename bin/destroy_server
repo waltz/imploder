@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -xea
+
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ENV_FILE=$CURRENT_PATH/../.env
+
+if [ -e $ENV_FILE ]
+then
+  . $ENV_FILE
+fi
+
+terraform destroy
