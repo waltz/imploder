@@ -13,6 +13,8 @@ before_deploy:
   - rm -f terraform.zip
 deploy:
   provider: script
-  script: bin/provision_server
+  script:
+    - cat $HOME/.ssh/id_rsa.pub
+    - bin/provision_server
   on:
     branch: master
