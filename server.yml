@@ -4,7 +4,7 @@
   vars:
     database_user: "{{lookup('env', 'DATABASE_USER')}}"
     database_password: "{{lookup('env', 'DATABASE_PASSWORD')}}"
-    database_name: "{{lookup('env', 'DATABASE_NAME')}}"
+    database_name: "imploder_production"
     database_url: 'postgres://{{database_user}}:{{database_password}}@localhost:5432/{{database_name}}'
     application_path: /var/www/app
     secret_key_base: "{{lookup('env', 'SECRET_KEY_BASE')}}"

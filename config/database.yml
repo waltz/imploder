@@ -5,12 +5,12 @@ default: &default
 
 development:
   <<: *default
-  database: exportgifsound_development
+  database: imploder_development
 
 test:
   <<: *default
-  database: exportgifsound_test
+  database: imploder_test
 
 production:
   <<: *default
-  database: exportgifsound_production
+  database: imploder_production
