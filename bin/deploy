@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -xea
+
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+openssl enc -aes-256-cbc -base64 -pass pass:$DEPLOY_KEY -d -p -in $CURRENT_PATH/../config/imploder-staging.key.enc -out $CURRENT_PATH/../config/imploder-staging.key
+ls -hal $CURRENT_PATH/../imploder-staging.key
+cd $CURRENT_PATH/.. && bundle exec cap $1 deploy
