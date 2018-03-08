@@ -8,9 +8,7 @@ set :repo_url, 'https://github.com/waltz/exportgifsound.com.git'
 set :deploy_to, '/var/www/app'
 set :bundle_flags, '--deployment'
 set :bundle_env_variables, { nokogiri_use_system_libraries: 1, with_pg_lib: '/usr/lib' }
-
-
-if File.exist?(Rails.root.join('config', 'imploder-staging.key'))
-  set :ssh_options, keys: [Rails.root.join('config', 'imploder-staging.key')]
-  puts "Using imploder key..."
-end
+set :ssh_options, {
+  forward_agent: true,
+  keys: [File.expand_path(File.dirname(__FILE__) + '/imploder-staging.key')]
+}

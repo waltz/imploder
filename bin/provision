@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Runs Ansible against the target host.
+# Usage:
+#   $ bin/provision staging
+
+set -xea
+
+CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ENV_FILE=$CURRENT_PATH/../.env
+
+if [ -e $ENV_FILE ]
+then
+  . $ENV_FILE
+fi
+
+STAGE=`echo $1 | tr [a-z] [A-Z]`
+HOST=$(eval echo "\$${STAGE}_HOST")
+
+ansible-playbook -i $HOST, $CURRENT_PATH/../server.yml

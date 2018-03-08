@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Runs Terraform and orchestrate the infrastructure.
+# Usage:
+#  $ bin/orchestrate
+
 set -xea
 
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -11,5 +15,3 @@ then
 fi
 
 terraform apply
-SERVER_IP=`terraform output ip`
-ansible-playbook -i $SERVER_IP, $CURRENT_PATH/../server.yml

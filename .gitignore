@@ -13,3 +13,4 @@
 *.rdb
 *.tfstate*
 server.retry
+config/*.key

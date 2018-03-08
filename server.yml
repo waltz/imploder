@@ -94,7 +94,7 @@
           server {
             listen 80;
             passenger_enabled on;
-            root {{application_path}}/public;
+            root {{application_path}}/current/public;
             passenger_user deploy;
             passenger_group deploy;
             passenger_ruby /home/deploy/.rbenv/shims/ruby;
@@ -153,7 +153,7 @@
     - name: authorize the deploy key
       authorized_key:
         user: deploy
-        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+        key: "{{ lookup('file', './config/imploder-staging.key.pub') }}"
 
     - name: install rbenv for the deploy user
       become: true
@@ -192,6 +192,22 @@
         dest: ~/.rbenv/plugins/ruby-build
         clone: yes
 
+    - name: install rbenv-default-gems
+      become: true
+      become_user: deploy
+      git:
+        repo: https://github.com/rbenv/rbenv-default-gems.git
+        dest: ~/.rbenv/plugins/rbenv-default-gems
+        clone: yes
+
+    - name: install bundler for each ruby version
+      become: true
+      become_user: deploy
+      lineinfile:
+        dest: ~/.rbenv/default-gems
+        line: 'bundler'
+        create: yes
+
     - name: set the application data directory
       file:
         path: '{{application_path}}'
@@ -199,3 +215,10 @@
         owner: deploy
         group: deploy
         mode: 0755
+
+    - name: install ruby
+      become: true
+      become_user: deploy
+      shell: /home/deploy/.rbenv/bin/rbenv install --skip-existing 2.3.3
+      args:
+        executable: /bin/bash
