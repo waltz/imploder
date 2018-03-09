@@ -1,4 +1,4 @@
-lock '3.6.1'
+lock '3.10.1'
 
 set :rbenv_type, :user
 set :rbenv_ruby, File.read('.ruby-version').strip
