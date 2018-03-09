@@ -10,7 +10,6 @@
     secret_key_base: "{{lookup('env', 'SECRET_KEY_BASE')}}"
     sidekiq_username: "{{lookup('env', 'SIDEKIQ_USERNAME')}}"
     sidekiq_password: "{{lookup('env', 'SIDEKIQ_PASSWORD')}}"
-    repository: https://github.com/waltz/exportgifsound.com
   tasks:
     - name: add support for https in apt
       apt: pkg={{item}} state=latest update_cache=yes cache_valid_time=3600
