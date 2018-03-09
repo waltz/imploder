@@ -4,7 +4,7 @@ set +x
 set -e
 
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DESTINATION=$CURRENT_PATH/vendor/youtube-dl
+DESTINATION=$CURRENT_PATH/../vendor/youtube-dl
 
 curl -L https://yt-dl.org/downloads/latest/youtube-dl -o $DESTINATION
 chmod a+rx $DESTINATION
