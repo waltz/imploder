@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Video, type: :model do
-  subject(:video) { FactoryGirl.create(:video) }
+  subject(:video) { FactoryBot.create(:video) }
 
   it { is_expected.to validate_presence_of(:gif_url) }
   it { is_expected.to validate_presence_of(:youtube_url) }
@@ -58,7 +58,7 @@ RSpec.describe Video, type: :model do
     end
 
     context 'when the field is set to ready' do
-      let(:video) { FactoryGirl.create(:video, status: 'ready') }
+      let(:video) { FactoryBot.create(:video, status: 'ready') }
 
       it 'is ready' do
         expect(video).to be_ready
