@@ -1,7 +1,11 @@
-#composer {
+.composer {
   font-size: 1em;
 
-  input[type="text"] {
+  &__field {
+    margin-top: 1em;
+  }
+
+  &__text-input {
     font-size: 1em;
     height: 2em;
     width: 98%;
@@ -9,13 +13,14 @@
     text-align: center;
   }
 
-  input[type="submit"] {
+  &__submit {
     color: $white;
     background-color: $light-blue;
     border: 0.25em solid darken($light-blue, 10);
     font-size: 1em;
     height: 2em;
     width: 100%;
+    margin-top: 1em;
   }
 }
 

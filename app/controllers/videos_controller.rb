@@ -1,11 +1,18 @@
 class VideosController < ApplicationController
-  def new
-    @video = Video.from_gifsound_params(gifsound_params)
-
-    if @video.save
-      ProcessVideoJob.perform_later(@video.id)
-      redirect_to video_path(@video)
+  def index
+    if params[:v]
+      @video = Video.from_gifsound_params(gifsound_params)
+      if @video.save
+        ProcessVideoJob.perform_later(@video.id)
+        redirect_to video_path(@video)
+      end
+    else
+      @videos = Video.order(created_at: :desc).limit(10)
     end
+  end
+
+  def new
+    @video = Video.new
   end
 
   def show

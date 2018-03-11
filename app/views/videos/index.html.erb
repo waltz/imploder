@@ -1,0 +1,13 @@
+<p>Welcome to the best gif tool in the world.</p>
+
+<div id="homepage">
+  <%= link_to 'Create an Implosion', new_video_path %>
+
+  <div class="implosions">
+    <% @videos.each do |video| %>
+      <div class="implosion">
+        <%= link_to video.id, video_path(video) %>
+      </div>
+    <% end %>
+  </div>
+</div>
