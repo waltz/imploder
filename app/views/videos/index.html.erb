@@ -4,10 +4,14 @@
   <%= link_to 'Create an Implosion', new_video_path %>
 
   <div class="implosions">
-    <% @videos.each do |video| %>
-      <div class="implosion">
-        <%= link_to video.id, video_path(video) %>
-      </div>
+    <% if @videos.nil? %>
+      <p>No videos yet.</p>
+    <% else %>
+      <% @videos.each do |video| %>
+        <div class="implosion">
+          <%= link_to video.id, video_path(video) %>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

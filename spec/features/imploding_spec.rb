@@ -12,7 +12,7 @@ RSpec.feature 'Imploding', type: :feature do
 
   scenario "as a friend" do
     visit "/"
-    expect(page).to have_content('gif imploder')
+    expect(page).to have_content('imploder')
     expect(page).to have_selector('.implosion', count: 2)
     click_link 'Create an Implosion'
     fill_in 'Gif Url', with: 'http://imgur.com/stuff.gif'

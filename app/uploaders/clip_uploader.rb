@@ -1,0 +1,2 @@
+class ClipUploader < Shrine
+end

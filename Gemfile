@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '>= 5.1.5'
 
+gem 'aws-sdk-s3'
 gem 'capistrano', '~> 3.1'
 gem 'capistrano-passenger'
 gem 'capistrano-rails', '~> 1.1'
@@ -10,6 +11,7 @@ gem 'dotenv'
 gem 'jquery-rails'
 gem 'pg'
 gem 'sass-rails', '~> 5.0'
+gem 'shrine'
 gem 'sidekiq'
 
 group :development, :test do
@@ -20,6 +22,7 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 3.5'
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'shrine-memory'
 end
 
 group :development do

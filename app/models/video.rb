@@ -1,4 +1,6 @@
 class Video < ApplicationRecord
+  include ClipUploader::Attachment.new(:clip)
+
   validates :gif_url, presence: true
   validates :youtube_url, presence: true
 

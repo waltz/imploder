@@ -10,19 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161001061621) do
+ActiveRecord::Schema.define(version: 20180331041045) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
 
-  create_table "videos", force: :cascade do |t|
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-    t.string   "status"
-    t.string   "gif_url"
-    t.string   "youtube_url"
-    t.integer  "audio_start_delay"
+  create_table "videos", id: :serial, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "status"
+    t.string "gif_url"
+    t.string "youtube_url"
+    t.integer "audio_start_delay"
+    t.json "clip_data"
   end
 
 end

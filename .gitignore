@@ -1,7 +1,6 @@
 .env
 .bundle
 .tag*
-*.mp4
 /.bundle
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -14,3 +13,4 @@
 *.tfstate*
 server.retry
 config/*.key
+public/uploads/

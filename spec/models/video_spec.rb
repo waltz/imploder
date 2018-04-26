@@ -65,4 +65,12 @@ RSpec.describe Video, type: :model do
       end
     end
   end
+
+  describe '#clip' do
+    it 'has an attached clip' do
+      video.clip = File.open(Rails.root.join('spec', 'support', 'fixtures', 'test.mp4'))
+      video.save
+      expect(video.clip.url).to match(/(.*).mp4/)
+    end
+  end
 end
