@@ -1,12 +1,15 @@
 language: ruby
 services:
   - postgresql
+before_install:
+  - sudo add-apt-repository ppa:mc3man/trusty-media -y
+  - sudo apt-get update -q
+  - sudo apt-get install ffmpeg -y
 before_script:
   - psql -c 'create database imploder_test;' -U postgres
   - bundle exec rails db:schema:load
 script:
-  - bundle exec rake
-  - bin/deploy staging
+  - bundle exec rake && bin/deploy staging
 env:
   global:
     secure: IMwMKJYxQzRnpZpukWvRmiscC7w9O0VutPSk7RR/FZJKcyK9YJoGalr6kpIbO7CduOO+Xn4z+09WMvxcIhVlsX/f7ky+9nM9WXXvGIO0LFcxwNS81dhtFoRKVBteZK6CJjORuXBrA8yjp3HnCkOmEzUblulceHNDspfzrT/lpFajn33sfOLu5dSFYY9pMW/97pZrZL5SHHxN+fZ72pWATYsJkiUk8Jx+UnjQjgakvA0pHKpToS+Cbj1nYl1AlBlZwJjxRl/4NCCzDXcCbd/RafQ5D4qqAJ6wZyvSY50Gqsx3J5ZkT1YfqroeOGXlAaCJznz3FpPBsCItF8tM2C4lKkSBMPgpoNik1ErEvc1dRe5tpk7x2y67em2cyEvucLnbiLxOuh8vieDIUXtxNyTmOtJQfpi1FIu4194Bdq1Eki/a/jv0uvLav8Vy35Jb3yz09hXF9wRBU0qHGvNHutejFOWHlioXntqHCMr8OT/JNj9cJRxE/uKjVH7BSGcLMbjOufTIaGKS06JprerOvtgpF7O0JZBuCP6/014CPZYEIjPZMGcSh1KIgpZfluwfH3uPmlL69ru7jZ6GmvhnobqJA88cOJB0JbqymS+upNTMPfl+4bOOZdAFZGNKvqV+pKKGcSRMS+lMQeHv7Ex+ZpYHMcQT5HYmKijg84m2jvvwl7U=

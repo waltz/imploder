@@ -17,7 +17,8 @@ CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 YOUTUBE_DL=$CURRENT_PATH/../vendor/youtube-dl
 GIF_FILE=`mktemp`
 VIDEO_NO_AUDIO_FILE=`mktemp`
-AUDIO_FILE=/tmp/$RANDOM.m4a
+# AUDIO_FILE=/tmp/$RANDOM.m4a
+AUDIO_FILE=`mktemp`
 
 # download the gif
 curl $GIF_URL > $GIF_FILE
@@ -33,7 +34,7 @@ yes | ffmpeg \
   $VIDEO_NO_AUDIO_FILE
 
 # get the audio file. 140 is the code for the m4a audio track
-$YOUTUBE_DL --format 140 -o $AUDIO_FILE $YOUTUBE_URL
+$YOUTUBE_DL --format 140 -o - $YOUTUBE_URL > $AUDIO_FILE
 
 # combine the two videos
 ffmpeg \
