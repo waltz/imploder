@@ -9,8 +9,8 @@ if Rails.env.test?
 elsif Rails.env.production?
   require 'shrine/storage/s3'
   s3_options = {
-    access_key_id: Rails.application.secrets.s3_access_key_id,
-    secret_access_key: Rails.application.secrets.s3_secret_access_key,
+    access_key_id: Rails.application.secrets.aws_access_key_id,
+    secret_access_key: Rails.application.secrets.aws_secret_access_key,
     bucket: Rails.application.secrets.s3_bucket,
     endpoint: 'https://nyc3.digitaloceanspaces.com',
     region: 'nyc3',

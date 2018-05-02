@@ -5,11 +5,16 @@
     database_user: "{{lookup('env', 'DATABASE_USER')}}"
     database_password: "{{lookup('env', 'DATABASE_PASSWORD')}}"
     database_name: "imploder_production"
-    database_url: 'postgres://{{database_user}}:{{database_password}}@localhost:5432/{{database_name}}'
     application_path: /var/www/app
-    secret_key_base: "{{lookup('env', 'SECRET_KEY_BASE')}}"
-    sidekiq_username: "{{lookup('env', 'SIDEKIQ_USERNAME')}}"
-    sidekiq_password: "{{lookup('env', 'SIDEKIQ_PASSWORD')}}"
+    env_vars:
+      secret_key_base: "{{lookup('env', 'SECRET_KEY_BASE')}}"
+      database_url: 'postgres://{{database_user}}:{{database_password}}@localhost:5432/{{database_name}}'
+      sidekiq_username: "{{lookup('env', 'SIDEKIQ_USERNAME')}}"
+      sidekiq_password: "{{lookup('env', 'SIDEKIQ_PASSWORD')}}"
+      aws_access_key_id: "{{lookup('env', 'AWS_ACCESS_KEY_ID')}}"
+      aws_secret_access_key: "{{lookup('env', 'AWS_SECRET_ACCESS_KEY')}}"
+      s3_bucket: "{{lookup('env', 'S3_BUCKET')}}"
+
   tasks:
     - name: add support for https in apt
       apt: pkg={{item}} state=latest update_cache=yes cache_valid_time=3600
@@ -98,11 +103,7 @@
             passenger_user deploy;
             passenger_group deploy;
             passenger_ruby /home/deploy/.rbenv/shims/ruby;
-          	passenger_env_var PATH ~/.rbenv/bin:/usr/bin:/bin;
-            passenger_env_var DATABASE_URL {{database_url}};
-            passenger_env_var SECRET_KEY_BASE {{secret_key_base}};
-            passenger_env_var SIDEKIQ_USERNAME {{sidekiq_username}};
-            passenger_env_var SIDEKIQ_PASSWORD {{sidekiq_password}};
+          	passenger_env_var PATH ~/.rbenv/bin:/usr/bin:/bin;            
           }
 
     - name: wrap sidekiq in an systemd service
@@ -120,7 +121,7 @@
           User=deploy
           Group=deploy
           UMask=0002
-          Environment=DATABASE_URL={{database_url}}
+          Environment=DATABASE_URL={{env_vars.database_url}}
 
           RestartSec=1
           Restart=on-failure
@@ -183,6 +184,14 @@
       lineinfile:
         dest: ~/.bash_profile
         line: 'eval "$(rbenv init -)"'
+
+    - name: set application environment variables
+      become: true
+      become_user: deploy
+      lineinfile:
+        dest: ~/.bash_profile
+        line: "export {{ item.key|upper }}={{ item.value }}"
+      with_dict: "{{env_vars}}"
 
     - name: install ruby-build
       become: true
