@@ -6,15 +6,16 @@
 
 set -xea
 
+STAGE=$1
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ENV_FILE=$CURRENT_PATH/../.env
+ENV_FILE=$CURRENT_PATH/../.env.$STAGE
 
 if [ -e $ENV_FILE ]
 then
   . $ENV_FILE
 fi
 
-STAGE=`echo $1 | tr [a-z] [A-Z]`
-HOST=$(eval echo "\$${STAGE}_HOST")
+UPPERCASE_STAGE=`echo $STAGE | tr [a-z] [A-Z]`
+HOST=$(eval echo "\$${UPPERCASE_STAGE}_HOST")
 
 ansible-playbook -i $HOST, $CURRENT_PATH/../server.yml
