@@ -6,8 +6,9 @@
 
 set -xea
 
+STAGE=$1
 CURRENT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ENV_FILE=$CURRENT_PATH/../.env.$1
+ENV_FILE=$CURRENT_PATH/../.env.$STAGE
 
 if [ -e $ENV_FILE ]
 then
@@ -15,4 +16,4 @@ then
 fi
 
 openssl enc -aes-256-cbc -base64 -pass pass:$DEPLOY_KEY -d -p -in $CURRENT_PATH/../config/imploder-staging.key.enc -out $CURRENT_PATH/../config/imploder-staging.key > /dev/null
-cd $CURRENT_PATH/.. && bundle exec cap $1 deploy
+cd $CURRENT_PATH/.. && bundle exec cap $STAGE deploy

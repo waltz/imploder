@@ -12,3 +12,5 @@ set :ssh_options, {
   forward_agent: true,
   keys: [File.expand_path(File.dirname(__FILE__) + '/imploder-staging.key')]
 }
+set :rails_env, 'production'
+server ENV.fetch('DEPLOY_HOST'), user: 'deploy', roles: %w{app db web}

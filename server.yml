@@ -19,8 +19,8 @@
     - name: add support for https in apt
       apt: pkg={{item}} state=latest update_cache=yes cache_valid_time=3600
       with_items:
-      - apt-transport-https
-      - ca-certificates
+        - apt-transport-https
+        - ca-certificates
 
     - name: add key for passenger repos
       apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x561F9B9CAC40B2F7 id=AC40B2F7 state=present
@@ -87,52 +87,19 @@
         priv: ALL
 
     - name: tell nginx to enable the passenger module
-      lineinfile:
+      template:
+        src: provisioner/nginx.conf
         dest: /etc/nginx/nginx.conf
-        regexp: 'passenger.conf'
-        line: 'include /etc/nginx/passenger.conf;'
 
     - name: enable and configure the nginx site
-      copy:
+      template: 
+        src: provisioner/nginx-site.j2
         dest: /etc/nginx/sites-available/default
-        content: |
-          server {
-            listen 80;
-            passenger_enabled on;
-            root {{application_path}}/current/public;
-            passenger_user deploy;
-            passenger_group deploy;
-            passenger_ruby /home/deploy/.rbenv/shims/ruby;
-          	passenger_env_var PATH ~/.rbenv/bin:/usr/bin:/bin;            
-          }
-
+    
     - name: wrap sidekiq in an systemd service
-      copy:
+      template:
+        src: provisioner/sidekiq.service.j2
         dest: /lib/systemd/system/sidekiq.service
-        content: |
-          [Unit]
-          Description=sidekiq
-          After=syslog.target network.target redis-server.service
-
-          [Service]
-          Type=simple
-          WorkingDirectory={{application_path}}
-          ExecStart=/usr/local/bin/bundle exec sidekiq -e production
-          User=deploy
-          Group=deploy
-          UMask=0002
-          Environment=DATABASE_URL={{env_vars.database_url}}
-
-          RestartSec=1
-          Restart=on-failure
-
-          StandardOutput=syslog
-          StandardError=syslog
-
-          SyslogIdentifier=sidekiq
-
-          [Install]
-          WantedBy=multi-user.target
 
     - name: start the sidekiq service
       systemd:
@@ -184,12 +151,6 @@
       lineinfile:
         dest: ~/.bash_profile
         line: 'eval "$(rbenv init -)"'
-
-    - name: set application environment variables
-      lineinfile:
-        dest: /etc/environment
-        line: "export {{ item.key|upper }}={{ item.value }}"
-      with_dict: "{{env_vars}}"
 
     - name: install ruby-build
       become: true

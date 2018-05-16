@@ -15,7 +15,4 @@ then
   . $ENV_FILE
 fi
 
-UPPERCASE_STAGE=`echo $STAGE | tr [a-z] [A-Z]`
-HOST=$(eval echo "\$${UPPERCASE_STAGE}_HOST")
-
-ansible-playbook -i $HOST, $CURRENT_PATH/../server.yml
+ansible-playbook -i $DEPLOY_HOST, $CURRENT_PATH/../server.yml
