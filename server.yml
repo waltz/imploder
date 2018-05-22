@@ -134,23 +134,9 @@
     - name: make sure the bash profile exists
       become: true
       become_user: deploy
-      file:
-        path: ~/.bash_profile
-        state: touch
-
-    - name: add the rbenv shim at the end of shell startup
-      become: true
-      become_user: deploy
-      lineinfile:
-        dest: ~/.bash_profile
-        line: 'export PATH="$HOME/.rbenv/bin:$PATH"'
-
-    - name: initialize rbenv on profile load
-      become: true
-      become_user: deploy
-      lineinfile:
-        dest: ~/.bash_profile
-        line: 'eval "$(rbenv init -)"'
+      template:
+        src: provisioner/bashrc.j2
+        dest: ~/.bashrc
 
     - name: install ruby-build
       become: true
