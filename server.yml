@@ -17,22 +17,34 @@
 
   tasks:
     - name: add support for https in apt
-      apt: pkg={{item}} state=latest update_cache=yes cache_valid_time=3600
+      apt:
+        pkg: "{{item}}"
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
       with_items:
         - apt-transport-https
         - ca-certificates
 
     - name: add key for passenger repos
-      apt_key: url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x561F9B9CAC40B2F7 id=AC40B2F7 state=present
+      apt_key:
+        url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x561F9B9CAC40B2F7
+        id: AC40B2F7
+        state: present
 
     - name: add the passenger repo
-      apt_repository: repo='deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
+      apt_repository:
+        repo: 'deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main'
 
     - name: force an apt update
-      apt: update_cache=yes
+      apt:
+        update_cache: yes
 
     - name: install packages
-      apt: name={{item}} state=latest update_cache=yes
+      apt:
+        name: "{{item}}"
+        state: latest
+        update_cache: yes
       with_items:
         - software-properties-common
         - build-essential
