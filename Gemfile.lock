@@ -125,6 +125,7 @@ GEM
       mini_portile2 (~> 2.3.0)
     pg (1.0.0)
     public_suffix (3.0.2)
+    puma (3.7.1)
     rack (2.0.4)
     rack-protection (2.0.1)
       rack
@@ -244,6 +245,7 @@ DEPENDENCIES
   jquery-rails
   listen (~> 3.0.5)
   pg
+  puma
   rails (>= 5.1.5)
   rails-controller-testing
   rspec-rails (~> 3.5)
