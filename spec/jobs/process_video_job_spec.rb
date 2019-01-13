@@ -1,30 +1,33 @@
 require 'rails_helper'
 
-RSpec.describe ProcessVideoJob, type: :job do
-  subject(:video) { FactoryBot.create(:video) }
+RSpec.describe ProcessVideoJob, :job, :vcr do
+  subject(:job) { ProcessVideoJob.new }
+  let(:video) { FactoryBot.create(:video) }
+  let(:audio_track) { File.open(Rails.root.join('spec', 'support', 'fixtures', 'the-more-you-know-audio.mp4')) }
+  let(:video_track) { File.open(Rails.root.join('spec', 'support', 'fixtures', 'test.mp4')) }
 
   before do
-    clear_enqueued_jobs
+    allow(YoutubeDownloader).to receive(:download).and_return(audio_track)
+    allow(GifProcessor).to receive(:process).and_return(video_track)
   end
-  
-  describe '.perform_later' do
-    it 'enqueues a job' do
-      ProcessVideoJob.perform_later(video.id)
-      expect(ProcessVideoJob).to have_been_enqueued
+
+  describe '#perform' do
+    context 'when the video does not exist' do    
+      it 'blows up' do
+        expect { job.perform(-1) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
 
-    it 'sets the video status when it finishes' do
-      perform_enqueued_jobs do
-        ProcessVideoJob.perform_later(video.id)
+    context 'when the video exists' do
+      it 'sets the video status to ready' do
+        job.perform(video.id)
+        expect(video.reload.status).to eq('ready')
       end
-      expect(video.reload.status).to eq('ready')
-    end
 
-    it 'adds a clip to the video' do
-      perform_enqueued_jobs do
-        ProcessVideoJob.perform_later(video.id)
+      it 'adds a clip to the video' do
+        job.perform(video.id)
+        expect(video.reload.clip).to be_present
       end
-      expect(video.reload.clip.url).to be_present
     end
   end
 end

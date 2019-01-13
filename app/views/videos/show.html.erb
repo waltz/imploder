@@ -7,6 +7,6 @@
 
 <video id="video-player" autoplay loop controls>
   <% if @video.ready? %>
-    <source src="<%= @video.clip_url %>">
+    <source src="<%= @video.clip_url %>" type="video/mp4">
   <% end %>
 </video>

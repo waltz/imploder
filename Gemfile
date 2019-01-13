@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '>= 5.1.5'
+gem 'rails', '5.2.2'
 
 gem 'aws-sdk-s3'
 gem 'capistrano', '~> 3.1'
@@ -14,16 +14,20 @@ gem 'puma'
 gem 'sass-rails', '~> 5.0'
 gem 'shrine'
 gem 'sidekiq'
+gem 'tzinfo-data'
 
 group :development, :test do
   gem 'awesome_print'
   gem 'byebug', platform: :mri
   gem 'capybara'
   gem 'factory_bot_rails'
+  gem 'pry'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 3.5'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shrine-memory'
+  gem 'vcr'
+  gem 'webmock'
 end
 
 group :development do
