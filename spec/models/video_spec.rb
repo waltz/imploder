@@ -73,4 +73,17 @@ RSpec.describe Video, type: :model do
       expect(video.clip.url).to match(/(.*).mp4/)
     end
   end
+
+  describe '#serializable_hash' do
+    let(:video) { FactoryBot.create(:video, status: 'ready') } 
+    let(:hash) { video.serializable_hash }
+
+    it 'only serializes specific attributes' do
+      expect(hash.symbolize_keys.keys).to eq([:id, :created_at, :updated_at, :status, :clip_url])
+    end
+
+    it 'serializes the status' do
+      expect(hash[:status]).to eq('ready')
+    end
+  end
 end

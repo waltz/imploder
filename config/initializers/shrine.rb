@@ -28,3 +28,4 @@ end
 
 Shrine.plugin :activerecord
 Shrine.plugin :cached_attachment_data
+Shrine.plugin :determine_mime_type

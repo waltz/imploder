@@ -7,7 +7,7 @@ class ProcessVideoJob < ApplicationJob
     def process
       video.clip = clip 
       video.status = 'ready'
-      video.save!
+      video.save
     end
     
     def clip

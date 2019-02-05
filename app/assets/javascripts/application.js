@@ -1,53 +1,50 @@
-//= require jquery
-//= require jquery_ujs
-//= require_tree .
+import $ from 'jquery'
 
-var video_id;
-var ready = false;
+export default class Fetcher {
+  constructor() {
+    this.ready = false
 
-$(function() {
-  var video_fetcher = $("#video-fetcher");
+    $(() => {
+      const video_fetcher = $("#video-fetcher");
 
-  if (video_fetcher.length > 0) {
-    $("#video-player").hide();
-    video_id = video_fetcher.data("video-id");
-    poll(video_id);
+      if (video_fetcher.length > 0) {
+        $("#video-player").hide();
+        this.video_id = video_fetcher.data("video-id");
+        this.poll();
+      }
+    });
   }
-});
 
-function videoUrl() {
-  return "/videos/" + video_id + ".mp4";
-}
+  showVideo(data) {
+    $("#video-fetcher").hide();
+    $("#video-player").show();
 
-function showVideo() {
-  $("#video-fetcher").hide();
-  $("#video-player").show();
+    var video_player = document.getElementById("video-player");
+    var source = document.createElement("source");
+    source.setAttribute("src", data.clip_url);
+    source.setAttribute("type", "video/mp4");
+    video_player.appendChild(source);
+    video_player.load();
+    video_player.play();
+  }
 
-  var video_player = document.getElementById("video-player");
-  var source = document.createElement("source");
-  source.setAttribute("src", "/videos/" + video_id + ".mp4");
-  source.setAttribute("type", "video/mp4");
-  video_player.appendChild(source);
-  video_player.load();
-  video_player.play();
-}
-
-function poll() {
-  $.ajax({
-    url: '/videos/' + video_id + '/status',
-    type: "GET",
-    success: function(data) {
-      if (data.status === "ready") {
-        ready = true;
-        showVideo();
-      }
-    },
-    dataType: "json",
-    complete: setTimeout(function() {
-      if (!ready) {
-        poll();
-      }
-    }, 5000),
-    timeout: 2000
-  });
+  poll() {
+    $.ajax({
+      url: '/videos/' + this.video_id,
+      type: "GET",
+      success: data => {
+        if (data.status === "ready") {
+          this.ready = true
+          this.showVideo(data);
+        }
+      },
+      dataType: "json",
+      complete: setTimeout(() => {
+        if (!this.ready) {
+          this.poll();
+        }
+      }, 5000),
+      timeout: 2000
+    });
+  }
 }

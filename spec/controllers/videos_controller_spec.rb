@@ -61,5 +61,12 @@ RSpec.describe VideosController, type: :controller do
       get :show, params: {id: video.id}
       expect(assigns(:video).gif_url).to eq('http://x.com/a.gif')
     end
+
+    context 'when the request asks for json' do
+      it 'renders the video attributes' do
+        get :show, params: {id: video.id, format: :json}
+        expect(JSON.parse(response.body)['created_at']).to be_present
+      end
+    end
   end
 end

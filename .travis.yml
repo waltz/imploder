@@ -5,10 +5,15 @@ before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -q
   - sudo apt-get install ffmpeg -y
+  - sudo apt-get install youtube-dl
+  - nvm install 10
+  - nvm use 10
 before_script:
   - psql -c 'create database imploder_test;' -U postgres
   - bundle exec rails db:schema:load
+  - yarn install
 script:
+  - bundle exec rails assets:precompile
   - bundle exec rspec 
 deploy:
   provider: heroku

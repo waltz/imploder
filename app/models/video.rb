@@ -26,4 +26,14 @@ class Video < ApplicationRecord
   def ready?
     status == 'ready'
   end
+
+  def attributes
+    {
+      id: id,
+      created_at: created_at,
+      updated_at: updated_at,
+      status: status,
+      clip_url: clip_url,
+    }
+  end
 end

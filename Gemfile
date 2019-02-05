@@ -14,6 +14,7 @@ gem 'sass-rails', '~> 5.0'
 gem 'shrine'
 gem 'sidekiq'
 gem 'tzinfo-data'
+gem 'webpacker', '~> 3.5'
 
 group :development, :test do
   gem 'awesome_print'
