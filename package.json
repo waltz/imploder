@@ -3,13 +3,13 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@rails/webpacker": "3.5",
+    "@rails/webpacker": "~4.0",
     "jquery": "^3.3.1"
   },
   "devDependencies": {
     "babel-jest": "^24.0.0",
     "jest": "^24.0.0",
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "~3.4.1"
   },
   "jest": {
     "testPathIgnorePatterns": [

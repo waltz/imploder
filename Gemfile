@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.6.3'
 
-gem 'rails', '5.2.2'
+gem 'rails', '5.2.3'
 
 gem 'aws-sdk-s3'
 gem 'dotenv'
