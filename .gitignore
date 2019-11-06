@@ -23,3 +23,5 @@ yarn-debug.log*
 .yarn-integrity
 public/assets
 vendor/bundle
+*.DS_Store
+yarn-error.log
