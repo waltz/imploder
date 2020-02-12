@@ -9,7 +9,11 @@
     <% else %>
       <% @videos.each do |video| %>
         <div class="implosion">
-          <%= link_to video.id, video_path(video) %>
+          <%= link_to video_path(video) do %>
+            <% if video.clip %>
+              <%= image_tag video.clip(:thumbnail).url %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     <% end %>

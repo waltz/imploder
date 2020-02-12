@@ -43,6 +43,6 @@ class GifProcessor
   end
 
   def ffmpeg_options
-    '-y -profile:v baseline -pix_fmt yuvj420p -r 30 -vf \'scale=trunc(iw/2)*2:trunc(ih/2)*2\' -f mp4' 
+    '-y -profile:v baseline -pix_fmt yuvj420p -r 30 -vf \'scale=trunc(iw/2)*2:trunc(ih/2)*2\' -f mp4'
   end
 end

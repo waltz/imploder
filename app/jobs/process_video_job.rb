@@ -6,6 +6,7 @@ class ProcessVideoJob < ApplicationJob
   class ProcessVideo < Struct.new(:video_id)
     def process
       video.clip = clip 
+      video.clip_derivatives!
       video.status = 'ready'
       video.save
     end

@@ -11,8 +11,9 @@ gem 'jquery-rails'
 gem 'pg'
 gem 'puma'
 gem 'sass-rails', '~> 5.0'
-gem 'shrine'
+gem 'shrine', '~> 3.2.1'
 gem 'sidekiq'
+gem 'streamio-ffmpeg'
 gem 'tzinfo-data'
 gem 'webpacker', '~> 3.5'
 
@@ -25,7 +26,6 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 3.5'
   gem 'shoulda-matchers', '~> 3.1'
-  gem 'shrine-memory'
   gem 'vcr'
   gem 'webmock'
 end

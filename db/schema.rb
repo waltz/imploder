@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180331041045) do
+ActiveRecord::Schema.define(version: 2020_02_12_210843) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "plpgsql"
 
   create_table "videos", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false

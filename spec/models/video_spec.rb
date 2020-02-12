@@ -67,10 +67,27 @@ RSpec.describe Video, type: :model do
   end
 
   describe '#clip' do
-    it 'has an attached clip' do
+    before do
       video.clip = File.open(Rails.root.join('spec', 'support', 'fixtures', 'test.mp4'))
       video.save
-      expect(video.clip.url).to match(/(.*).mp4/)
+    end
+
+    it 'has an attached clip' do
+      expect(video.clip_url).to match(/(.*).mp4/)
+    end
+
+    context 'when derivatives are processed' do
+      before do
+        video.clip_derivatives!
+      end
+
+      it 'has a thumbnail derivative' do
+        expect(video.clip_data.dig('derivatives', 'thumbnail')).not_to be_nil
+      end
+
+      it 'has a thumbnail url' do
+        expect(video.clip_url(:thumbnail)).to be_present
+      end
     end
   end
 

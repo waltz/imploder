@@ -28,6 +28,11 @@ RSpec.describe ProcessVideoJob, :job, :vcr do
         job.perform(video.id)
         expect(video.reload.clip).to be_present
       end
+
+      it 'makes a thumbnail for the video' do
+        job.perform(video.id)
+        expect(video.reload.clip_data.dig('derivatives', 'thumbnail')).to be_present
+      end
     end
   end
 end
