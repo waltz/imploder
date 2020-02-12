@@ -20,7 +20,7 @@ class Muxer
   private
 
   def command
-    "ffmpeg -y -i #{video.path} -ss #{offset} -i #{audio.path} -c:v h264 -c:a aac -map 0:v:0 -map 1:a:0 -shortest -f mp4 #{destination.path}"
+    "ffmpeg -y -i #{video.path} -ss #{offset} -i #{audio.path} -c:v h264 -c:a aac -map 0:v:0 -map 1:a:0 -shortest -f mp4 -strict experimental #{destination.path}"
   end
 
   def destination
