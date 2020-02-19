@@ -1,13 +1,42 @@
 require 'streamio-ffmpeg'
+require 'image_processing/vips'
 
 class ClipUploader < Shrine
-  Attacher.derivatives do |original|
-    movie = FFMPEG::Movie.new(original.path)
-    capture_at = movie.duration / 2
-    thumbnail = Tempfile.new(binmode: true)
-   
-    movie.screenshot(thumbnail.path, seek_time: capture_at)
+  class DerivativesBuilder
+    attr_accessor :original
 
-    { thumbnail: thumbnail }
+    def initialize(original)
+      @original = original
+    end
+
+    def build
+      { thumbnail: thumbnail, homepage: homepage }
+    end
+
+    def thumbnail
+      @thumbnail ||= begin
+        movie = FFMPEG::Movie.new(original.path)
+        capture_at = movie.duration / 2
+        tempfile = Tempfile.new(binmode: true)
+        tempfile.open
+
+        movie.screenshot(tempfile.path, seek_time: capture_at)
+
+        tempfile
+      end
+    end
+
+    def homepage
+      @homepage ||= begin
+        ImageProcessing::Vips
+          .source(thumbnail)
+          .convert('png')
+          .resize_to_limit!(200, 200)
+      end
+    end
+  end
+
+  Attacher.derivatives do |original|
+    DerivativesBuilder.new(original).build
   end
 end

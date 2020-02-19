@@ -11,7 +11,7 @@
         <div class="implosion">
           <%= link_to video_path(video) do %>
             <% if video.clip %>
-              <%= image_tag video.clip(:thumbnail).url %>
+              <%= image_tag video.clip(:homepage).url %>
             <% end %>
           <% end %>
         </div>

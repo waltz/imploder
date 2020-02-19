@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get update -q
   - sudo apt-get install ffmpeg -y
   - sudo apt-get install youtube-dl
+  - sudo apt-get install libvips
   - nvm install 10
   - nvm use 10
 before_script:
