@@ -88,6 +88,10 @@ RSpec.describe Video, type: :model do
       it 'has a homepage derivative' do
         expect(video.clip_data.dig('derivatives', 'homepage')).not_to be_nil
       end
+      
+      it 'has a twitter derivative' do
+        expect(video.clip_data.dig('derivatives', 'twitter')).not_to be_nil
+      end
 
       it 'has a thumbnail url' do
         expect(video.clip_url(:thumbnail)).to be_present

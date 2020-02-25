@@ -1,5 +1,5 @@
 require 'streamio-ffmpeg'
-require 'image_processing/vips'
+require 'image_processing/mini_magick'
 
 class ClipUploader < Shrine
   class DerivativesBuilder
@@ -10,7 +10,7 @@ class ClipUploader < Shrine
     end
 
     def build
-      { thumbnail: thumbnail, homepage: homepage }
+      { thumbnail: thumbnail, homepage: homepage, twitter: twitter }
     end
 
     def thumbnail
@@ -28,10 +28,19 @@ class ClipUploader < Shrine
 
     def homepage
       @homepage ||= begin
-        ImageProcessing::Vips
+        ImageProcessing::MiniMagick
           .source(thumbnail)
           .convert('png')
           .resize_to_limit!(200, 200)
+      end
+    end
+    
+    def twitter 
+      @twitter ||= begin
+        chain = ImageProcessing::MiniMagick
+          .source(thumbnail)
+          .convert('png')
+          .resize_to_limit!(300, 157)
       end
     end
   end

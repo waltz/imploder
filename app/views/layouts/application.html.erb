@@ -6,6 +6,8 @@
 
     <%= javascript_pack_tag 'application' %>
     <%= stylesheet_link_tag 'application' %>
+
+    <%= yield :head %>
   </head>
 
   <body>
@@ -25,7 +27,7 @@
       <footer>
         <ul>
           <li>
-            built by <a href="http://twitter.com/waltz" title="big on the internet">@waltz</a>
+            built by <a href="https://twitter.com/waltz" title="big on the internet">@waltz</a>
           </li>
           <li>
             see the <a href="https://github.com/waltz/imploder" title="oh god don't judge me">the source</a>

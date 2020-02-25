@@ -1,3 +1,12 @@
+<% if @video.ready? %>
+  <% content_for :head do %>
+    <meta name="description" content="GIF +++ YouTube Mashup!" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@imploderxyz" />
+    <meta name="twitter:image" content="<%= @video.clip(:twitter).url %>" />
+  <% end %>
+<% end %>
+  :
 <% if !@video.ready? %>
   <div id="video-fetcher" data-video-id=<%= @video.id %>>
     <p>Making your video. Hold tight!</p>
