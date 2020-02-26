@@ -7,7 +7,7 @@
     <meta name="twitter:image" content="<%= @video.clip(:twitter).url %>" />
   <% end %>
 <% end %>
-  :
+
 <% if !@video.ready? %>
   <div id="video-fetcher" data-video-id=<%= @video.id %>>
     <p>Making your video. Hold tight!</p>
@@ -19,5 +19,8 @@
   <video id="video-player" autoplay loop controls>
     <source src="<%= @video.clip_url %>" type="video/mp4">
   </video>
-  <%= link_to "Tweet This", "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', host: 'localhost' %>
+  <ul id="video-links">
+    <li><%= link_to 'Download', @video.download_url %></li>
+    <li><%= link_to 'Tweet', "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', host: 'localhost' %></li>
+  </ul>
 <% end %>

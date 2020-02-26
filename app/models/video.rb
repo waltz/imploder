@@ -1,3 +1,5 @@
+require 'content_disposition'
+
 class Video < ApplicationRecord
   include ClipUploader::Attachment.new(:clip)
 
@@ -35,5 +37,9 @@ class Video < ApplicationRecord
       status: status,
       clip_url: clip_url,
     }
+  end
+
+  def download_url
+    clip.url({ response_content_disposition: ContentDisposition.format(disposition: 'attachment', filename: "implosion-#{id}.mp4") })
   end
 end

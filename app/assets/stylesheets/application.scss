@@ -77,3 +77,15 @@ footer {
   padding: 0;
   border: 1px solid darken($white, 11);
 }
+
+#video-links {
+  list-style-type: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0;
+
+  li {
+    display: inline;
+  }
+}
