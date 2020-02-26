@@ -21,6 +21,6 @@
   </video>
   <ul id="video-links">
     <li><%= link_to 'Download', @video.download_url %></li>
-    <li><%= link_to 'Tweet', "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', host: 'localhost' %></li>
+    <li><%= link_to 'Tweet', "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', target: 'blank' %></li>
   </ul>
 <% end %>
