@@ -15,8 +15,9 @@
   </div>
 <% end %>
 
-<video id="video-player" autoplay loop controls>
-  <% if @video.ready? %>
+<% if @video.ready? %>
+  <video id="video-player" autoplay loop controls>
     <source src="<%= @video.clip_url %>" type="video/mp4">
-  <% end %>
-</video>
+  </video>
+  <%= link_to "Tweet This", "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', host: 'localhost' %>
+<% end %>
