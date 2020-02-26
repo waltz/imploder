@@ -26,6 +26,9 @@ else
   }
 end
 
+if Rails.application.secrets.cloudfront_distribution
+  Shrine.plugin :url_options, store: { host: Rails.application.secrets.cloudfront_distribution }
+end
 Shrine.plugin :activerecord
 Shrine.plugin :cached_attachment_data
 Shrine.plugin :determine_mime_type
