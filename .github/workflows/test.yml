@@ -1,0 +1,12 @@
+on: [push]
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: | 
+          sudo apt-get update -q
+          sudo apt-get install ffmpeg -y
+          sudo apt-get install youtube-dl
+          sudo apt-get install imagemagick 
