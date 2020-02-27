@@ -3,10 +3,40 @@ jobs:
   build:
     name: Test
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+
     steps:
+      - name: Get Code
+        uses: actions/checkout@v2
+
       - name: Install Dependencies
         run: | 
           sudo apt-get update -q
           sudo apt-get install ffmpeg -y
           sudo apt-get install youtube-dl
           sudo apt-get install imagemagick 
+     
+      - name: Install Ruby
+        uses: actions/setup-ruby/@v1
+        with:
+          ruby-version: '2.6'
+
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x' 
+
+      - name: Build and Test with Rake
+        env:
+          PGHOST: 127.0.0.1
+          PGUSER: postgres
+          RAILS_ENV: test
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:setup
+          bundle exec rails test
