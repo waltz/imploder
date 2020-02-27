@@ -85,4 +85,9 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Force domain consistency.
+  config.middleware.use Rack::HostRedirect, {
+    'exportgifsound.com' => 'imploder.xyz'
+  }
 end

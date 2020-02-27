@@ -36,3 +36,7 @@ group :development do
   gem 'web-console'
   gem 'listen', '~> 3.0.5'
 end
+
+group :production do
+  gem 'rack-host-redirect'
+end
