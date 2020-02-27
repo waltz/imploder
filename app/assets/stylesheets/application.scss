@@ -1,0 +1,91 @@
+$golden-ratio: 1.618033988749895;
+
+@import "fonts/_news_cycle.scss";
+@import "_colors.scss";
+@import "_composer.scss";
+
+
+html {
+  font-family: 'NewsCycle', sans-serif;
+  background-color: $pink;
+  font-size: 16pt;
+  color: lighten($pink, 30);
+}
+
+h1 {
+  font-weight: bold;
+
+  a {
+    color: $white;
+    text-decoration: none;
+
+    &:hover {
+      color: darken($white, 5);
+    }
+  }
+}
+
+a {
+  color: lighten($pink, 15);
+
+  &:hover {
+    color: lighten($pink, 10);
+  }
+}
+
+#container {
+  width: 30em;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+#main-outer {
+  background-color: lighten($pink, 22);
+  color: $light-blue;
+  padding: 1em;
+  border: 1em solid lighten($pink, 11);
+  margin-bottom: 2em;
+}
+
+main {
+  background-color: $white;
+  margin: 0;
+  padding: 1em;
+}
+
+footer {
+  margin-bottom: 2em;
+
+  ul {
+    list-style-type: none;
+
+    li {
+      display: inline;
+      margin-right: 2em;
+    }
+  }
+}
+
+.spinner {
+  width: 75px;
+}
+
+#video-player {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 1px solid darken($white, 11);
+}
+
+#video-links {
+  list-style-type: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0;
+
+  li {
+    display: inline;
+  }
+}

@@ -1,0 +1,25 @@
+language: ruby
+services:
+  - postgresql
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get install ffmpeg -y
+  - sudo apt-get install youtube-dl
+  - sudo apt-get install imagemagick 
+  - nvm install 10
+  - nvm use 10
+before_script:
+  - psql -c 'create database imploder_test;' -U postgres
+  - bundle exec rails db:schema:load
+  - yarn install
+script:
+  - bundle exec rails assets:precompile
+  - bundle exec rspec 
+deploy:
+  provider: heroku
+  api_key:
+    secure: "x4t9eOKPi5iO//Cl9uzlYpiuvhG+VMpIWKk67QdCXbWGQ0wjUFwldqbxsge741qdo4OCXi1gCPTyYD7mfqpJXW2ODArqoFnvKNl87gabIO9HTEeVyrHuvE5TzilR1JhMWpM4n+MVfv3pLW7702luUxnvR6ijL0BfzzHhzNndJJab0iM8+HKJaxyiS/XLjTIKoLYhtRgImyj4C93z8f3En8h6IC+RQstsurTLAgL+YO5XLXcM9nxNQU+7HPWd05YkUd2eIH8+qbDQBU1xyOYmsQ+zZ94fD30h5t1XpqMbqjBX/ulqlVXi/vLWMan+ZOHx+TjXsbCCfyCIMmhFLzv0lnnD0vYr9zAfmacanr2Xs9x+99dtHhtL2sdgYv/lTZ/CcmMBFt3+Qmh3zilKL7UX8C/zoQA+kNeUzbr2WBgYU9il00AN86IeODnmkLSWf1YF+crJ3/5VwMYSHPofAN3VUbJdQ4eqm+QztLABU0xYxxs63ucUoV+Q4RjZAR2EaZ+F1UYWumiDvfrmc8bE4QMIzSH22uAWDcDGyLb+O1xJtiyyTLWeHzl5x0IzwNyKC71uma095fXHGwGn7c4VVOqtaJuDBLfuyH7qnH/OF9ekCzBcmQQPuqmm5hldxpE8tYRhPctHdXducVG5XxzGAKbqgpnynzHZrnA2S8+Y6fVVPjI="
+  app:
+    master: imploder-staging
+  run:
+    - "bundle exec rails db:migrate"

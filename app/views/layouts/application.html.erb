@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>imploder</title>
+    <%= csrf_meta_tags %>
+
+    <%= javascript_pack_tag 'application' %>
+    <%= stylesheet_link_tag 'application' %>
+
+    <%= yield :head %>
+  </head>
+
+  <body>
+    <div id="container">
+      <header>
+        <h1>
+          <%= link_to 'imploder', root_path, title: 'go home' %>
+        </h1>
+      </header>
+
+      <div id="main-outer">
+        <main>
+          <%= yield %>
+        </main>
+      </div>
+
+      <footer>
+        <ul>
+          <li>
+            built by <a href="https://twitter.com/waltz" title="big on the internet">@waltz</a>
+          </li>
+          <li>
+            see the <a href="https://github.com/waltz/imploder" title="oh god don't judge me">the source</a>
+          </li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>

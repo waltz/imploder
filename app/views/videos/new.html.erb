@@ -1,0 +1,23 @@
+<p>Build a new implosion! Find a GIF and a Video from YouTube and we'll
+combine them.</p>
+
+<div class="composer">
+  <%= form_for @video do |f| %>
+    <div class="composer__field">
+      <%= f.label :gif_url, 'Gif Url' %>
+      <%= f.text_field :gif_url, class: 'composer__text-input' %>
+    </div>
+
+    <div class="composer__field">
+      <%= f.label :youtube_url, 'Youtube Url' %>
+      <%= f.text_field :youtube_url, class: 'composer__text-input' %>
+    </div>
+
+    <div class="composer__field">
+      <%= f.label :audio_start_delay, 'Audio Start Delay' %>
+      <%= f.text_field :audio_start_delay, class: 'composer__text-input' %>
+    </div>
+
+    <%= f.submit 'Implode!', class: 'composer__submit' %>
+  <% end %>
+</div>

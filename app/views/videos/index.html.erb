@@ -1,0 +1,21 @@
+<p>Welcome to the best gif tool in the world.</p>
+
+<div id="homepage">
+  <%= link_to 'Create an Implosion', new_video_path %>
+
+  <div class="implosions">
+    <% if @videos.nil? %>
+      <p>No videos yet.</p>
+    <% else %>
+      <% @videos.each do |video| %>
+        <div class="implosion">
+          <%= link_to video_path(video) do %>
+            <% if video.clip %>
+              <%= image_tag video.clip(:homepage).url %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

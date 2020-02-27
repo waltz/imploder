@@ -1,0 +1,39 @@
+.composer {
+  font-size: 1em;
+
+  &__field {
+    margin-top: 1em;
+  }
+
+  &__text-input {
+    font-size: 1em;
+    height: 2em;
+    width: 98%;
+    padding: 0.25em;
+    text-align: center;
+  }
+
+  &__submit {
+    color: $white;
+    background-color: $light-blue;
+    border: 0.25em solid darken($light-blue, 10);
+    font-size: 1em;
+    height: 2em;
+    width: 100%;
+    margin-top: 1em;
+  }
+}
+
+#gif {
+  width: 50%;
+}
+
+#youtube-video-frame {
+  width: 100%;
+}
+
+#youtube-video {
+  width: 10em;
+  margin-left: auto;
+  margin-right: auto;
+}
