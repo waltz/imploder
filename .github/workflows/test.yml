@@ -56,5 +56,5 @@ jobs:
         run: |
           echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" > ~/.netrc
           echo "machine git.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" > ~/.netrc
-          heroku git:remote
+          heroku git:remote --app imploder-staging
           git push heroku master
