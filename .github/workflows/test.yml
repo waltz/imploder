@@ -54,7 +54,15 @@ jobs:
 
       - name: Write Heroku Credentials
         run: |
-          echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" > ~/.netrc
-          echo "machine git.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" > ~/.netrc
+          echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
+          echo "machine git.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
+
+      - name: Check World
+        run: |
+          git remote -v
+          cat ~/.netrc
+
+      - name: Push to Heroku
+        run: |
           heroku git:remote --app imploder-staging
           git push heroku master
