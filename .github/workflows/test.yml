@@ -10,12 +10,12 @@ jobs:
         ports: ['5432:5432']
 
     steps:
+      - name: Get Code
+        uses: actions/checkout@v2
+      
       - name: Fetch Ruby Version
         run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
         id: rbenv
-
-      - name: Get Code
-        uses: actions/checkout@v2
 
       - name: Install Dependencies
         run: | 
