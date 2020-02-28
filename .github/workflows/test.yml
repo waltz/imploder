@@ -23,7 +23,7 @@ jobs:
       - name: Install Ruby
         uses: actions/setup-ruby/@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '2.6.3'
 
       - name: Install Node
         uses: actions/setup-node@v1
