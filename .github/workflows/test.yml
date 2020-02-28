@@ -73,6 +73,7 @@ jobs:
           heroku auth:whoami
 
       - name: Push to Heroku
+        if: ${{ github.ref }} == 'master'
         run: |
           heroku git:remote --app imploder-staging
           git push heroku HEAD:master
