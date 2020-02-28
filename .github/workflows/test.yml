@@ -57,6 +57,9 @@ jobs:
           echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
           echo "machine git.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
 
+      - name: NEtrc
+        run: cat ~/.netrc
+
       - name: Check World
         run: |
           heroku auth:whoami
