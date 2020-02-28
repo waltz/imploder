@@ -53,7 +53,7 @@ jobs:
           bundle exec rails test
 
       - name: Write Heroku Credentials
-        run: echo "machine api.heroku.com\n  login ${{ HEROKU_USER }}\n  password ${{ HEROKU_API_KEY }}\n" > ~/.netrc
+        run: echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" > ~/.netrc
 
       - name: Deploy to Heroku
         run: heroku ps --app imploder-staging
