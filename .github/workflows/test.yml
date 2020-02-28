@@ -7,6 +7,7 @@ jobs:
     services:
       postgres:
         image: postgres
+        ports: ['5432:5432']
 
     steps:
       - name: Get Code
@@ -43,7 +44,7 @@ jobs:
 
       - name: Build and Test with Rake
         env:
-          PGHOST: postgres
+          PGHOST: localhost
           PGUSER: postgres
           RAILS_ENV: test
         run: |
