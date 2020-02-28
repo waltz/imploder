@@ -59,8 +59,7 @@ jobs:
 
       - name: Check World
         run: |
-          git remote -v
-          cat ~/.netrc
+          heroku auth:whoami
 
       - name: Push to Heroku
         run: |
