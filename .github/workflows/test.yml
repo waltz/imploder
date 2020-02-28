@@ -10,6 +10,10 @@ jobs:
         ports: ['5432:5432']
 
     steps:
+      - name: Fetch Ruby Version
+        run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
+        id: rbenv
+
       - name: Get Code
         uses: actions/checkout@v2
 
@@ -23,12 +27,15 @@ jobs:
       - name: Install Ruby
         uses: actions/setup-ruby/@v1
         with:
-          ruby-version: '2.6.3'
+          ruby-version: "${{ steps.rbenv.outputs.RUBY_VERSION }}"
 
       - name: Install Node
         uses: actions/setup-node@v1
         with:
           node-version: '10.x' 
+
+      - name: Install Node Packages
+        run: yarn
 
       - name: Build and Test with Rake
         env:
