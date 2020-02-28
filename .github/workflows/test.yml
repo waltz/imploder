@@ -25,7 +25,6 @@ jobs:
         run: | 
           sudo apt-get install ffmpeg -y
           sudo apt-get install youtube-dl
-          sudo apt-get install imagemagick 
      
       - name: Install Ruby
         uses: actions/setup-ruby/@v1
@@ -47,10 +46,14 @@ jobs:
 
       - name: Build and Test with Rake
         env:
-          PGHOST: localhost
-          PGUSER: postgres
           DATABASE_URL: postgres://test-a-bot:toot@localhost/rubbish-heap
           RAILS_ENV: test
         run: |
           bundle exec rails db:setup
           bundle exec rails test
+
+      - name: Write Heroku Credentials
+        run: echo "machine api.heroku.com\n  login ${{ HEROKU_USER }}\n  password ${{ HEROKU_API_KEY }}\n" > ~/.netrc
+
+      - name: Deploy to Heroku
+        run: heroku ps --app imploder-staging
