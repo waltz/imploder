@@ -7,7 +7,9 @@ jobs:
     services:
       db:
         image: postgres:11
-        ports: ['5432:5432']
+        ports:
+          - '5432:5432'
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Get Code
@@ -37,13 +39,16 @@ jobs:
       - name: Install Node Packages
         run: yarn
 
+      - name: Install Ruby Packages
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3 
+
       - name: Build and Test with Rake
         env:
           PGHOST: 127.0.0.1
           PGUSER: postgres
           RAILS_ENV: test
         run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
           bundle exec rails db:setup
           bundle exec rails test
