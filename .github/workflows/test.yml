@@ -75,4 +75,4 @@ jobs:
       - name: Push to Heroku
         run: |
           heroku git:remote --app imploder-staging
-          git push heroku master
+          git push heroku HEAD:master
