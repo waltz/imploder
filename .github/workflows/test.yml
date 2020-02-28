@@ -8,6 +8,10 @@ jobs:
       postgres:
         image: postgres
         ports: ['5432:5432']
+        env:
+          POSTGRES_USER: test-a-bot
+          POSTGRES_PASSWORD: toot
+          POSTGRES_DATABASE: rubbish-heap
 
     steps:
       - name: Get Code
@@ -19,7 +23,6 @@ jobs:
 
       - name: Install Dependencies
         run: | 
-          sudo apt-get update -q
           sudo apt-get install ffmpeg -y
           sudo apt-get install youtube-dl
           sudo apt-get install imagemagick 
@@ -46,6 +49,7 @@ jobs:
         env:
           PGHOST: localhost
           PGUSER: postgres
+          DATABASE_URL: postgres://test-a-bot:toot@localhost/rubbish-heap
           RAILS_ENV: test
         run: |
           bundle exec rails db:setup
