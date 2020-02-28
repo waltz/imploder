@@ -53,9 +53,17 @@ jobs:
           bundle exec rails test
 
       - name: Write Heroku Credentials
-        run: |
-          echo "machine api.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
-          echo "machine git.heroku.com\n  login ${{ secrets.HEROKU_USER }}\n  password ${{ secrets.HEROKU_API_KEY }}\n" >> ~/.netrc
+        env:
+          NETRC: |
+            machine api.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+            machine git.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+        run: echo $NETRC > ~/.netrc
 
       - name: NEtrc
         run: cat ~/.netrc
