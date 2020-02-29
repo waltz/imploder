@@ -17,24 +17,28 @@ jobs:
       - name: Get Code
         uses: actions/checkout@v2
       
-      - name: Fetch Ruby Version
-        run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
-        id: rbenv
-
       - name: Install Dependencies
         run: | 
           sudo apt-get install ffmpeg -y
           sudo apt-get install youtube-dl
-     
+      
+      - name: Fetch Ruby Version
+        id: ruby_version
+        run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
+
       - name: Install Ruby
         uses: actions/setup-ruby/@v1
         with:
-          ruby-version: "${{ steps.rbenv.outputs.RUBY_VERSION }}"
+          ruby-version: ${{ steps.ruby_version.outputs.RUBY_VERSION }}
+      
+      - name: Fetch Node Version
+        id: node_version
+        run: echo "::set-output name=NODE_VERSION::$(cat .nvmrc)"
 
       - name: Install Node
         uses: actions/setup-node@v1
         with:
-          node-version: '10.x' 
+          node-version: ${{ steps.node_version.outputs.NODE_VERSION }}
 
       - name: Install Node Packages
         run: yarn
@@ -64,13 +68,6 @@ jobs:
               password ${{ secrets.HEROKU_API_KEY }}
 
         run: echo $NETRC > ~/.netrc
-
-      - name: NEtrc
-        run: cat ~/.netrc
-
-      - name: Check World
-        run: |
-          heroku auth:whoami
 
       - name: Push to Heroku
         if: github.ref == 'master'
