@@ -1,0 +1,98 @@
+on: [push]
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports: ['5432:5432']
+        env:
+          POSTGRES_USER: test-a-bot
+          POSTGRES_PASSWORD: toot
+          POSTGRES_DATABASE: rubbish-heap
+
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v2
+      
+      - name: Install Dependencies
+        run: | 
+          sudo apt-get install ffmpeg -y
+          sudo apt-get install youtube-dl
+      
+      - name: Fetch Ruby Version
+        id: ruby_version
+        run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
+
+      - name: Install Ruby
+        uses: actions/setup-ruby/@v1
+        with:
+          ruby-version: ${{ steps.ruby_version.outputs.RUBY_VERSION }}
+      
+      - name: Fetch Node Version
+        id: node_version
+        run: echo "::set-output name=NODE_VERSION::$(cat .nvmrc)"
+
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ steps.node_version.outputs.NODE_VERSION }}
+
+      - name: Fetch Yarn Cache Directory
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Configure Yarn Cache
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Node Packages
+        run: yarn
+
+      - name: Configure Ruby Cache
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Install Ruby Packages
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3 
+
+      - name: Build and Test with Rake
+        env:
+          DATABASE_URL: postgres://test-a-bot:toot@localhost/rubbish-heap
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:setup
+          bundle exec rails test
+
+      - name: Write Heroku Credentials
+        env:
+          NETRC: |
+            machine api.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+            machine git.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+        run: echo $NETRC > ~/.netrc
+
+      - name: Push to Heroku
+        if: github.ref == 'refs/heads/master'
+        run: |
+          heroku git:remote --app imploder-staging
+          git push heroku HEAD:master
