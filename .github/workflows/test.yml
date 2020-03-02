@@ -97,10 +97,16 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           heroku git:remote --app ${{ secrets.STAGING_APP_NAME }}
+          heroku maintenance:on --app ${{ secrets.STAGING_APP_NAME }}
           git push --force heroku HEAD:master
+          heroku run rails db:migrate
+          heroku maintenance:off --app ${{ secrets.STAGING_APP_NAME }}
       
       - name: Push to Heroku, Production
         if: github.ref == 'refs/heads/production'
         run: |
           heroku git:remote --app ${{ secrets.PRODUCTION_APP_NAME }}
+          heroku maintenance:on --app $${{ secrets.PRODUCTION_APP_NAME }}
           git push --force heroku HEAD:master
+          heroku run rails db:migrate
+          heroku maintenance:off --app ${{ secrets.PRODUCTION_APP_NAME }}
