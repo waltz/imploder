@@ -14,7 +14,8 @@ class Video < ApplicationRecord
               else params[:gif]
                 params[:gif]
               end
-    new(
+
+    find_or_initialize_by(
       gif_url: gif_url,
       youtube_url: "https://www.youtube.com/watch?v=#{params[:v]}",
       audio_start_delay: params[:s].blank? ? 0 : params[:s]

@@ -24,25 +24,40 @@ RSpec.describe VideosController, type: :controller do
     end
 
     context 'with gifsound.com style url parameters' do
-      before do
-        get :index, params: { gif: 'things', v: 'great-id' }
+      def make_request(params = {})
+        get :index, params: { gif: 'things', v: 'great-id' }.merge(params)
       end
 
       it 'redirects to the video page' do
+        make_request
         expect(response).to redirect_to(video_path(assigns(:video).id))
       end
 
       it 'has the right youtube url' do
+        make_request
         expect(assigns(:video).youtube_url).to eq('https://www.youtube.com/watch?v=great-id')
       end
 
       it 'has the right gif url' do
+        make_request
         expect(assigns(:video).gif_url).to eq('things')
       end
 
       it 'enqueues the video for processesing' do
+        make_request
         expect(ProcessVideoJob).to receive(:perform_later)
         get :index, params: { gif: 'things', v: 'great-id' }
+      end
+
+      context 'when the video already exists' do
+        let(:duplicate_params) { { gif_url: 'taco', youtube_url: 'https://www.youtube.com/watch?v=torta', audio_start_delay: 66 } }
+        let!(:another_video) { FactoryBot.create(:video, duplicate_params) }
+        
+        it 'redirects to the existing video page' do
+          make_request({ gif: duplicate_params[:gif_url], v: 'torta', s: duplicate_params[:audio_start_delay] })
+
+          expect(response).to redirect_to(video_path(another_video.id))
+        end
       end
     end
   end
