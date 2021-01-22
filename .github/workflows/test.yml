@@ -30,7 +30,7 @@ jobs:
         run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
 
       - name: Install Ruby
-        uses: actions/setup-ruby/@v1
+        uses: ruby/setup-ruby/@v1
         with:
           ruby-version: ${{ steps.ruby_version.outputs.RUBY_VERSION }}
       
