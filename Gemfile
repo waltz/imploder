@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.6.3'
+ruby '2.6.6'
 
 gem 'rails', '5.2.3'
 
@@ -11,7 +11,7 @@ gem 'image_processing', '~> 1.0'
 gem 'jquery-rails'
 gem 'nokogiri', '>= 1.10.4'
 gem 'pg'
-gem 'puma', '>= 3.12.2'
+gem 'puma', '>= 4.3.3'
 gem 'sass-rails', '~> 5.0'
 gem 'shrine', '~> 3.2.1'
 gem 'sidekiq'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_03_31_041045) do
+ActiveRecord::Schema.define(version: 2020_03_06_195915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 2018_03_31_041045) do
     t.string "youtube_url"
     t.integer "audio_start_delay"
     t.json "clip_data"
+    t.string "title"
   end
 
 end
