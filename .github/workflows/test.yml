@@ -95,11 +95,11 @@ jobs:
         run: echo $NETRC > ~/.netrc
 
       - name: Push to Heroku, Staging
-        if: github.ref == 'refs/heads/'
+        if: github.ref == 'refs/heads/main'
         run: |
           heroku git:remote --app ${{ secrets.STAGING_APP_NAME }}
           heroku maintenance:on --app ${{ secrets.STAGING_APP_NAME }}
-          git push --force heroku HEAD:master
+          git push --force heroku HEAD:main
           heroku run rails db:migrate
           heroku maintenance:off --app ${{ secrets.STAGING_APP_NAME }}
 
@@ -108,6 +108,6 @@ jobs:
         run: |
           heroku git:remote --app ${{ secrets.PRODUCTION_APP_NAME }}
           heroku maintenance:on --app ${{ secrets.PRODUCTION_APP_NAME }}
-          git push --force heroku HEAD:master
+          git push --force heroku HEAD:main
           heroku run rails db:migrate
           heroku maintenance:off --app ${{ secrets.PRODUCTION_APP_NAME }}
