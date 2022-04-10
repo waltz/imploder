@@ -14,7 +14,7 @@ RSpec.describe VideosController, type: :controller do
 
     context 'when there are videos' do
       before do
-        FactoryBot.create_list(:video, 15)
+        FactoryBot.create_list(:video, 15, status: 'ready')
       end
 
       it 'returns the first ten videos' do

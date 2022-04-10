@@ -66,6 +66,23 @@ RSpec.describe Video, type: :model do
     end
   end
 
+  describe '#error?' do
+    context 'when the field is blank' do
+      it 'is not errored' do
+        expect(video).not_to be_error
+      end
+    end
+
+    context 'when the field is set to error' do
+      let(:video) { FactoryBot.create(:video, status: 'error') }
+
+      it 'is errored' do
+        expect(video).to be_error
+      end
+    end
+  end
+
+
   describe '#clip' do
     before do
       video.clip = File.open(Rails.root.join('spec', 'support', 'fixtures', 'test.mp4'))

@@ -8,7 +8,7 @@
   <% end %>
 <% end %>
 
-<% if !@video.ready? %>
+<% if !@video.ready? && !@video.error? %>
   <div id="video-fetcher" data-video-id=<%= @video.id %>>
     <p>Making your video. Hold tight!</p>
     <%= image_tag 'spinner.gif', class: 'spinner' %>
@@ -23,4 +23,8 @@
     <li><%= link_to 'Download', @video.download_url %></li>
     <li><%= link_to 'Tweet', "https://twitter.com/intent/tweet?text=#{URI.encode('love it')}&url=#{video_url(@video)}", class: 'tweet-link', target: 'blank' %></li>
   </ul>
+<% end %>
+
+<% if @video.error? %>
+  <p>Drat, sorry, something went wrong when making your video.</p>
 <% end %>

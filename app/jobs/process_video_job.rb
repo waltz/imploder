@@ -5,12 +5,16 @@ require 'muxer'
 class ProcessVideoJob < ApplicationJob
   class ProcessVideo < Struct.new(:video_id)
     def process
-      video.clip = clip 
-      video.clip_derivatives!
-      video.status = 'ready'
-      video.save
+      begin
+        video.clip = clip
+        video.clip_derivatives!
+        video.status = 'ready'
+        video.save
+      rescue StandardError => e
+        video.update!(status: 'error')
+      end
     end
-    
+
     def clip
       @clip ||= Muxer.mux(youtube_audio, gif_clip, video.audio_start_delay)
     end
