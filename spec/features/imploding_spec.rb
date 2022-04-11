@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.feature 'Imploding', type: :feature do
   before do
-    FactoryBot.create_list(:video, 2)
+    FactoryBot.create_list(:video, 2, status: 'ready')
   end
 
   scenario 'someone from gifsound.com' do

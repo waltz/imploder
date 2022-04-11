@@ -6,6 +6,8 @@ class Video < ApplicationRecord
   validates :gif_url, presence: true
   validates :youtube_url, presence: true
 
+  scope :ready, -> { where(status: 'ready') }
+
   def self.from_gifsound_params(params)
     gif_url = if params[:gfycat]
                 "https://giant.gfycat.com/#{params[:gfycat]}.mp4"
@@ -28,6 +30,10 @@ class Video < ApplicationRecord
 
   def ready?
     status == 'ready'
+  end
+
+  def error?
+    status == 'error'
   end
 
   def attributes

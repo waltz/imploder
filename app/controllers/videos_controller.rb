@@ -7,7 +7,7 @@ class VideosController < ApplicationController
         redirect_to video_path(@video)
       end
     else
-      @videos = Video.order(created_at: :desc).limit(10)
+      @videos = Video.ready.order(created_at: :desc).limit(10)
     end
   end
 
