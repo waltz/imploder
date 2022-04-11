@@ -1,4 +1,5 @@
 require 'open3'
+require 'gif_extractors/base_extractor'
 
 class GifProcessor
   attr_accessor :gif_url
@@ -14,7 +15,8 @@ class GifProcessor
 
   def download
     @download ||= begin
-      uri = URI(gif_url)
+      content_url = GIFExtractors::BaseExtractor.new(gif_url).content_url
+      uri = URI.parse(content_url)
       tempfile = Tempfile.new.tap(&:binmode)
       ssl = (uri.scheme == 'https')
       Net::HTTP.start(uri.host, uri.port, use_ssl: ssl) do |http|
