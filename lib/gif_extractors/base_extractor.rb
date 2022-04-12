@@ -1,9 +1,10 @@
 require Rails.root.join('lib', 'gif_extractors', 'imgur_extractor')
+require Rails.root.join('lib', 'gif_extractors', 'tenor_extractor')
 
 module GIFExtractors
-  EXTRACTORS = [GIFExtractors::ImgurExtractor]
+  EXTRACTORS = [GIFExtractors::ImgurExtractor, GIFExtractors::TenorExtractor]
 
-  class BaseExtractor
+  class GIFExtractors::BaseExtractor
     attr_accessor :url
 
     def initialize(url)
