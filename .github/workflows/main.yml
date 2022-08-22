@@ -97,24 +97,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: test
     steps:
-      - name: Write Heroku Credentials
-        env:
-          NETRC: |
-            machine api.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
-
-            machine git.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
-
-        run: echo $NETRC > ~/.netrc
-
-      - name: Push to Heroku, Staging
-        run: |
-          heroku whoami
-          heroku git:remote --app ${{ secrets.STAGING_APP_NAME }}
-          heroku maintenance:on --app ${{ secrets.STAGING_APP_NAME }}
-          git push --force heroku HEAD:main
-          heroku run rails db:migrate
-          heroku maintenance:off --app ${{ secrets.STAGING_APP_NAME }}
+      - name: Deploy to Staging
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.STAGING_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_USER }}
