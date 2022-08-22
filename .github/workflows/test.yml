@@ -81,18 +81,6 @@ jobs:
           bundle exec rails db:setup
           bundle exec rails test
 
-      - name: Write Heroku Credentials
-        env:
-          NETRC: |
-            machine api.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
-
-            machine git.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
-
-        run: echo $NETRC > ~/.netrc
 
       - name: Push to Heroku, Production
         if: github.ref == 'refs/heads/production'
@@ -109,8 +97,22 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: test
     steps:
+      - name: Write Heroku Credentials
+        env:
+          NETRC: |
+            machine api.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+            machine git.heroku.com
+              login ${{ secrets.HEROKU_USER }}
+              password ${{ secrets.HEROKU_API_KEY }}
+
+        run: echo $NETRC > ~/.netrc
+
       - name: Push to Heroku, Staging
         run: |
+          heroku whoami
           heroku git:remote --app ${{ secrets.STAGING_APP_NAME }}
           heroku maintenance:on --app ${{ secrets.STAGING_APP_NAME }}
           git push --force heroku HEAD:main
