@@ -93,6 +93,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: test
     steps:
