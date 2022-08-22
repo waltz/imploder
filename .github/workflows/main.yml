@@ -1,6 +1,6 @@
 on: [push]
 jobs:
-  build:
+  test:
     name: Test
     runs-on: ubuntu-latest
 
@@ -30,7 +30,7 @@ jobs:
         run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
 
       - name: Install Ruby
-        uses: ruby/setup-ruby/@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ steps.ruby_version.outputs.RUBY_VERSION }}
 
@@ -81,33 +81,34 @@ jobs:
           bundle exec rails db:setup
           bundle exec rails test
 
-      - name: Write Heroku Credentials
-        env:
-          NETRC: |
-            machine api.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-            machine git.heroku.com
-              login ${{ secrets.HEROKU_USER }}
-              password ${{ secrets.HEROKU_API_KEY }}
+      - name: Deploy to Staging
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.STAGING_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_USER }}
 
-        run: echo $NETRC > ~/.netrc
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/production'
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Push to Heroku, Staging
-        if: github.ref == 'refs/heads/main'
-        run: |
-          heroku git:remote --app ${{ secrets.STAGING_APP_NAME }}
-          heroku maintenance:on --app ${{ secrets.STAGING_APP_NAME }}
-          git push --force heroku HEAD:main
-          heroku run rails db:migrate
-          heroku maintenance:off --app ${{ secrets.STAGING_APP_NAME }}
-
-      - name: Push to Heroku, Production
-        if: github.ref == 'refs/heads/production'
-        run: |
-          heroku git:remote --app ${{ secrets.PRODUCTION_APP_NAME }}
-          heroku maintenance:on --app ${{ secrets.PRODUCTION_APP_NAME }}
-          git push --force heroku HEAD:main
-          heroku run rails db:migrate
-          heroku maintenance:off --app ${{ secrets.PRODUCTION_APP_NAME }}
+      - name: Deploy to Staging
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.PRODUCTION_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_USER }}
