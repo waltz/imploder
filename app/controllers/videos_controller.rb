@@ -40,6 +40,6 @@ class VideosController < ApplicationController
   end
 
   def video_params
-    params.require(:video).permit(:youtube_url, :gif_url)
+    params.require(:video).permit(:youtube_url, :gif_url, :audio_start_delay)
   end
 end

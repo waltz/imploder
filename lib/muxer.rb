@@ -3,6 +3,8 @@ require 'open3'
 class Muxer
   attr_accessor :audio, :video, :offset
 
+  class Error < StandardError; end
+
   def self.mux(audio, video, offset = 0)
     self.new(audio, video, offset).mux
   end
@@ -12,8 +14,18 @@ class Muxer
   end
 
   def mux
-    _, stderr, _ = Open3.capture3(command)
-    Rails.logger.info(stderr)
+    Rails.logger.info("Muxing file")
+    stderr, stdout, status = Open3.capture3(command)
+
+    if status.success?
+      Rails.logger.info("Muxing was successful")
+    else
+      Rails.logger.error("There was a problem muxing!")
+      Rails.logger.error(stderr)
+      Rails.logger.error(stdout)
+      raise Muxer::Error.new(stderr)
+    end
+
     destination
   end
 

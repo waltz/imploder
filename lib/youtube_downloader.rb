@@ -1,13 +1,23 @@
 require 'open3'
 
-class YoutubeDownloaderError < StandardError; end
-
 class YoutubeDownloader
+  class Error < StandardError; end
+
   def self.download(video_url)
+    Rails.logger.info("Beginning to download: #{video_url}")
     destination = Tempfile.new
-    _, stderr, status = Open3.capture3("youtube-dl -o - --format bestaudio #{video_url} > #{destination.path}")
-    Rails.logger.info(stderr)
-    raise YoutubeDownloaderError.new(stderr) if status != 0
+    stdout, stderr, status = Open3.capture3("yt-dlp -o - --format bestaudio #{video_url} > #{destination.path}")
+
+    Rails.logger.info(stdout)
+
+    if status.success?
+      Rails.logger.info("Successfully downloaded: #{video_url}")
+    else
+      Rails.logger.error("There was a problem downloading: #{video_url}")
+      Rails.logger.error(stderr)
+      raise YoutubeDownloader::Error.new(stderr)
+    end
+
     destination
   end
 end
