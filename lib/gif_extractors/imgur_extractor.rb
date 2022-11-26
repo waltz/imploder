@@ -1,6 +1,10 @@
 module GIFExtractors
   class ImgurExtractor
-    # https://imgur.com/gallery/WMTeuZl
+    # TOOD: Imgur gallery urls are busted because the identifier for the gallery
+    # no longer corresponds to a path to the media source.
+    #
+    # input: https://imgur.com/gallery/IFHnZ9s
+    # output: https://i.imgur.com/yvMK5rI.mp4
 
     attr_accessor :url
 

@@ -12,7 +12,7 @@ RSpec.describe ProcessVideoJob, :job, :vcr do
   end
 
   describe '#perform' do
-    context 'when the video does not exist' do    
+    context 'when the video does not exist' do
       it 'blows up' do
         expect { job.perform(-1) }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -32,6 +32,50 @@ RSpec.describe ProcessVideoJob, :job, :vcr do
       it 'makes a thumbnail for the video' do
         job.perform(video.id)
         expect(video.reload.clip_data.dig('derivatives', 'thumbnail')).to be_present
+      end
+
+      context "when the muxer blows up" do
+        before do
+          allow(Muxer).to receive(:mux).and_raise(Muxer::Error)
+        end
+
+        it "sets the error state on the video" do
+          job.perform(video.id)
+          expect(video.reload.status).to eq("error")
+        end
+      end
+
+      context "when the youtube downloader blows up" do
+        before do
+          allow(YoutubeDownloader).to receive(:download).and_raise(YoutubeDownloader::Error)
+        end
+
+        it "sets the error state on the video" do
+          job.perform(video.id)
+          expect(video.reload.status).to eq("error")
+        end
+      end
+
+      context "when the gif processor blows up" do
+        before do
+          allow(GifProcessor).to receive(:process).and_raise(GifProcessor::ConversionError)
+        end
+
+        it "sets the error state on the video" do
+          job.perform(video.id)
+          expect(video.reload.status).to eq("error")
+        end
+      end
+
+      context "when the gif processor has an unahndled problem" do
+        before do
+          allow(GifProcessor).to receive(:process).and_raise(StandardError)
+        end
+
+        it "sets the error state on the video" do
+          job.perform(video.id)
+          expect(video.reload.status).to eq("error")
+        end
       end
     end
   end

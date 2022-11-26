@@ -1,4 +1,5 @@
 require 'sidekiq/testing'
+Sidekiq::Testing.inline!
 
 RSpec.configure do |config|
   config.before(:each) do

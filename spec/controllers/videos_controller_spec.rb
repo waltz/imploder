@@ -52,7 +52,7 @@ RSpec.describe VideosController, type: :controller do
       context 'when the video already exists' do
         let(:duplicate_params) { { gif_url: 'taco', youtube_url: 'https://www.youtube.com/watch?v=torta', audio_start_delay: 66 } }
         let!(:another_video) { FactoryBot.create(:video, duplicate_params) }
-        
+
         it 'redirects to the existing video page' do
           make_request({ gif: duplicate_params[:gif_url], v: 'torta', s: duplicate_params[:audio_start_delay] })
 
@@ -82,6 +82,28 @@ RSpec.describe VideosController, type: :controller do
         get :show, params: {id: video.id, format: :json}
         expect(JSON.parse(response.body)['created_at']).to be_present
       end
+    end
+  end
+
+  describe 'POST #create' do
+    def do_request
+      gif_url = 'https://tenor.com/view/i-love-iran-gif-19136551'
+      youtube_url = 'https://www.youtube.com/watch?v=mIXnTIzRcIA'
+      audio_start_delay = '22'
+      post :create, params: { video: { gif_url: gif_url, youtube_url: youtube_url, audio_start_delay: audio_start_delay } }
+    end
+
+    it 'redirects to the video path' do
+      do_request
+      expect(response).to redirect_to(/videos/)
+    end
+
+    it 'creates a new video' do
+      expect { do_request }.to change(Video, :count).by(1)
+    end
+
+    it 'enqueues a job' do
+      expect { do_request }.to have_enqueued_job(ProcessVideoJob)
     end
   end
 end
