@@ -1,8 +1,13 @@
 require Rails.root.join('lib', 'gif_extractors', 'imgur_extractor')
 require Rails.root.join('lib', 'gif_extractors', 'tenor_extractor')
+require Rails.root.join('lib', 'gif_extractors', 'giphy_extractor')
 
 module GIFExtractors
-  EXTRACTORS = [GIFExtractors::ImgurExtractor, GIFExtractors::TenorExtractor]
+  EXTRACTORS = [
+    GIFExtractors::ImgurExtractor,
+    GIFExtractors::TenorExtractor,
+    GIFExtractors::GiphyExtractor,
+  ]
 
   class NoResultsFoundError < StandardError; end
 

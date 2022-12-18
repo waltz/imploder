@@ -6,7 +6,6 @@ RSpec.describe GifProcessor do
   subject(:gif_processor) { GifProcessor.new(gif_url) }
 
   before do
-    allow(Open3).to receive(:capture3).and_return(['fake-stdout', 'fake-stderr', double(:status, success?: true)])
     allow(Rails.logger).to receive(:info)
   end
 
@@ -17,18 +16,43 @@ RSpec.describe GifProcessor do
   end
 
   describe '#download', :vcr do
-    it 'uses net http to download the gif' do
-      expect(Net::HTTP).to receive(:start)
-      gif_processor.download
+    let(:fake_file) { double('tempfile', { length: 123, path: "/tmp/fake.mp4" }) }
+
+    before do
+      allow(Tempfile).to receive(:new).and_return(fake_file)
+
+      allow(Open3).to receive(:capture3).and_return(['fake-stdout', 'fake-stderr', double(:status, success?: true)])
     end
 
     it 'writes the file to disk' do
       expect(gif_processor.download.path).to be_present
     end
+
+    context 'when the download fails' do
+      before do
+        allow(Open3).to receive(:capture3).and_return(['fake-stdout', 'fake-stderr', double(:status, success?: false)])
+      end
+
+      it 'raises a downloader error' do
+        expect { gif_processor.download }.to raise_error(GifProcessor::DownloadError)
+      end
+    end
+
+    context 'when the downloaded file is empty' do
+      let(:fake_file) { double('tempfile', { length: 0, path: "/tmp/fake.mp4" }) }
+
+      it 'raises an empty file error' do
+        expect { gif_processor.download }.to raise_error(GifProcessor::EmptyFileError)
+      end
+    end
   end
 
   describe '#convert' do
-    let(:gif) { File.open(Rails.root.join('spec', 'support', 'fixtures', 'cyberpunx.gif')) }
+    let(:gif) { File.open(Rails.root.join('spec', 'support', 'fixtures', 'from-giphy.mp4')) }
+
+    before do
+      allow(Open3).to receive(:capture3).and_return(['fake-stdout', 'fake-stderr', double(:status, success?: true)])
+    end
 
     it 'calls ffmpeg' do
       gif_processor.convert(gif)

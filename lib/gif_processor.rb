@@ -3,6 +3,8 @@ require 'gif_extractors/base_extractor'
 
 class GifProcessor
   class ConversionError < StandardError; end
+  class DownloadError < StandardError; end
+  class EmptyFileError < StandardError; end
 
   attr_accessor :gif_url
 
@@ -17,29 +19,31 @@ class GifProcessor
   end
 
   def download
-    @download ||= begin
-      Rails.logger.info("Attempting to extract gif with url=#{gif_url}")
-      content_url = GIFExtractors::BaseExtractor.new(gif_url).content_url
-      Rails.logger.info("Found content_url=#{content_url}")
-      uri = URI.parse(content_url)
-      tempfile = Tempfile.new.tap(&:binmode)
-      ssl = (uri.scheme == 'https')
-      Net::HTTP.start(uri.host, uri.port, use_ssl: ssl) do |http|
-        request = Net::HTTP::Get.new(uri.path)
-        http.request(request) do |response|
-          response.read_body do |chunk|
-            tempfile.write(chunk)
-          end
-        end
-      end
+    Rails.logger.info("Attempting to extract gif with url=#{gif_url}")
+    content_url = GIFExtractors::BaseExtractor.new(gif_url).content_url
+    Rails.logger.info("Found content_url=#{content_url}")
 
-      tempfile
+    tempfile = Tempfile.new
+    stderr, stdout, status = Open3.capture3("curl -L #{content_url} > #{tempfile.path}")
+
+    if status.success?
+      Rails.logger.info("Successfully downloaded url=#{content_url}")
+    else
+      Rails.logger.error(stderr)
+      Rails.logger.error(stdout)
+      Rails.logger.error("Failed to download url=#{content_url}")
+      raise GifProcessor::DownloadError
     end
+
+    raise GifProcessor::EmptyFileError if tempfile.length.zero?
+
+    tempfile
   end
 
   def convert(file)
     clean_path = Shellwords.escape(file.path)
-    stderr, stdout, status = Open3.capture3("ffmpeg -i #{clean_path} #{ffmpeg_options} #{destination.path}")
+    clean_destination_path = Shellwords.escape(destination.path)
+    stderr, stdout, status = Open3.capture3("ffmpeg -i #{clean_path} #{ffmpeg_options} #{clean_destination_path}")
 
     Rails.logger.info("Processing gif")
 

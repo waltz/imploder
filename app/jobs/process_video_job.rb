@@ -13,7 +13,7 @@ class ProcessVideoJob < ApplicationJob
       rescue StandardError => e
         video.update!(status: 'error')
         Rails.logger.error(e.message)
-        Rails.logger.error(e.backtrace.join('\n'))
+        e.backtrace.each { |line| Rails.logger.error(line) }
         Rails.logger.error("There was a problem processing video with video_id=#{video.id}")
       end
     end
